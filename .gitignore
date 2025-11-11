@@ -4,6 +4,17 @@
 # Log file
 *.log
 
+# Build files
+*build
+
+# Gradle
+*gradle/
+gradlew
+gradlew.bat
+
+# VScode
+.vscode
+
 # BlueJ files
 *.ctxt
 
