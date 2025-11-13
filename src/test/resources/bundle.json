@@ -1,0 +1,24 @@
+{
+    "id": "bundle 1",
+    "entities": [ {
+        "id": "Entity 2",
+        "wasDerivedFrom": [ {
+            "id": "Entity 1"
+        }],
+        "wasAttributedTo": [ {
+            "id": "Person Agent",
+            "actedOnBehalfOf": [ {
+                "id": "Organization Agent"
+            }]
+        }],
+        "wasGeneratedBy": [ {
+            "id": "Activity 2",
+            "wasAssociatedWith": [ {
+                "id": "Software Agent"
+            }],
+            "used": [ {
+                "id": "Entity 1"
+            }]
+        }]
+    }]
+}

@@ -3,21 +3,18 @@ package com.provframework.capture;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.annotation.KafkaListener;
-
-import com.provframework.capture.model.Bundle;
 
 @SpringBootApplication
 @EnableKafka
 public class CaptureApplication {
 
+	/*
+	 * The entry point of the system is com.provframework.capture.kafka.Listener.listen().
+	 * 
+	 * Listener is declared as a Spring Service bean so it automatically starts listening on app startup.
+	 */
+
 	public static void main(String[] args) {
 		SpringApplication.run(CaptureApplication.class, args);
 	}
-
-	@KafkaListener(topics = "prov", groupId = "capture")
-	public void listen(Bundle bundle) {
-		System.out.println(bundle.getId());
-	}
-
 }
