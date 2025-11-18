@@ -3,17 +3,27 @@ package com.provframework.capture;
 import java.time.Instant;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 
+import com.provframework.capture.database.implementations.SparqlEndpoint;
 import com.provframework.capture.language.Sparql;
 import com.provframework.capture.model.Bundle;
 
 @SpringBootApplication
 @EnableKafka
 public class Main {
+
+	Logger logger = LoggerFactory.getLogger(Main.class);
+
+	@Autowired
+	 private SparqlEndpoint sparqlEndpoint;
+
 	public static void main(String[] args) {
 		SpringApplication.run(Main.class, args);
 	}
@@ -24,6 +34,9 @@ public class Main {
 		bundle.setGeneratedAtTime(Instant.now().toEpochMilli());
 
 		String statement = Sparql.generateStatement(bundle);
+		logger.debug("Generated SPARQL: \n" + statement);
+
+		sparqlEndpoint.execute(statement);
 	}
 
 }
