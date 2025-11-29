@@ -6,7 +6,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import com.provframework.capture.model.Bundle;
+import com.provframework.capture.prov.Bundle;
 
 @Service
 public class Listener {

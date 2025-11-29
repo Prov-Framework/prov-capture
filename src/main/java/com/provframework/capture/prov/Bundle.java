@@ -1,21 +1,12 @@
-package com.provframework.capture.model;
+package com.provframework.capture.prov;
 
 import java.util.List;
 
 public class Bundle {
-    private String id;
     private List<Entity> entities;
     private List<Activity> activities;
     private List<Agent> agents;
     private Long generatedAtTime;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public List<Entity> getEntities() {
         return entities;

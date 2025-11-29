@@ -1,4 +1,4 @@
-package com.provframework.capture.model;
+package com.provframework.capture.prov;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package com.provframework.capture.kafka;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provframework.capture.model.Bundle;
+import com.provframework.capture.prov.Bundle;
 
 import java.io.IOException;
 
