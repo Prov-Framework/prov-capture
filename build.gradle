@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.provframework'
@@ -35,6 +36,27 @@ tasks.named('test') {
 jar {
 	enabled = true
 }
+
 springBoot {
 	mainClass = 'com.provframework.capture.Main'
+}
+
+test {
+    exclude '**/IntegrationTest.class' // Exclude all classes ending with IntegrationTest
+	finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
+jacoco {
+	toolVersion = "0.8.14" 
+	reportsDirectory = layout.buildDirectory.dir('jacocoHtml')
+}
+
+jacocoTestReport {
+	dependsOn test // Ensure tests run before report generation
+	reports {
+		xml.required = false
+		csv.required = false
+		html.required = true
+		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+	}
 }
