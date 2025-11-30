@@ -9,22 +9,21 @@ import org.neo4j.driver.GraphDatabase;
 
 @Service
 public class Bolt {
+    @SuppressWarnings("unused")
+    private final String uri;
+    @SuppressWarnings("unused")
+    private final String username;
+    @SuppressWarnings("unused")
+    private final String password;
+    private final Driver driver;
 
-    @Value("${bolt.uri}")
-    private String uri;
-    @Value("${bolt.username}")
-    private String username;
-    @Value("${bolt.password}")
-    private String password;
-
-    private Driver driver;
-
-    public Bolt() {
-        try {
-            this.driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Bolt(@Value("${bolt.uri}") String uri,
+                @Value("${bolt.username}") String username,
+                @Value("${bolt.password}") String password) {
+        this.uri = uri;
+        this.username = username;
+        this.password = password;
+        this.driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
     }
 
     public Driver getDriver() {

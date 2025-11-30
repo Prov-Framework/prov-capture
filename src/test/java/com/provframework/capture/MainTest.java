@@ -10,20 +10,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @SpringBootTest
-class CaptureApplicationTests {
+class MainTest {
 
 	@Test
 	void contextLoads() {
 		assertTrue(true);
 	}
 
-	// @Autowired
-	// KafkaTemplate<String, String> kafkaTemplate;
+	@Autowired
+	KafkaTemplate<String, String> kafkaTemplate;
 
-	// @Test
-	// void listen() throws IOException {
-	// 	String bundle = new String(getClass().getResourceAsStream("/bundle.json").readAllBytes());
-	// 	kafkaTemplate.send("prov", bundle);
-	// }
-
+	@Test
+	void listen() throws IOException {
+		String bundle = new String(getClass().getResourceAsStream("/bundle.json").readAllBytes());
+		kafkaTemplate.send("prov", bundle);
+	}
 }

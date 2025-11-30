@@ -30,8 +30,11 @@ public class Main {
 
 	@KafkaListener(topics = "${kafka.topic}", groupId = "${kafka.groupId}")
 	public void listen(Bundle bundle) {
-		logger.debug("Received bundle: {}", bundle);
 		bundle.setGeneratedAtTime(Instant.now().toEpochMilli());
-		bolt.getDriver().executableQuery(Gql.getInsertStatement(bundle));
+		logger.debug("Received bundle: {}", bundle);
+
+		String statement = Gql.getInsertStatement(bundle);
+		logger.debug("Generated Statement: {}", statement);
+		bolt.getDriver().executableQuery(statement).execute();
 	}
 }

@@ -14,8 +14,6 @@ public class Gql {
                 "generatedAtTime", Cypher.literalOf(bundle.getGeneratedAtTime())
             );
 
-        Statement statement = Cypher.create(bundleNode).build();
-        
-        return statement.getCypher();
+        return Cypher.create(bundleNode).build().getCypher();
     }
 }
