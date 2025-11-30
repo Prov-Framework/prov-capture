@@ -7,7 +7,7 @@ import org.neo4j.cypherdsl.core.Node;
 import org.neo4j.cypherdsl.core.Statement;
 
 public class Gql {
-    public static String generateInsertStatement(Bundle bundle) {
+    public static String getInsertStatement(Bundle bundle) {
         Node bundleNode = Cypher.node("Bundle")
             .named("bundle")
             .withProperties(

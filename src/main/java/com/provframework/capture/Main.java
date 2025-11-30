@@ -2,6 +2,7 @@ package com.provframework.capture;
 
 import java.time.Instant;
 
+import org.neo4j.driver.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 
+import com.provframework.capture.dbdriver.Bolt;
 import com.provframework.capture.gql.Gql;
 import com.provframework.capture.prov.Bundle;
 
@@ -18,6 +20,9 @@ import com.provframework.capture.prov.Bundle;
 public class Main {
 
 	private Logger logger = LoggerFactory.getLogger(Main.class);
+
+	@Autowired
+	Bolt bolt;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(Main.class, args);
@@ -25,8 +30,8 @@ public class Main {
 
 	@KafkaListener(topics = "${kafka.topic}", groupId = "${kafka.groupId}")
 	public void listen(Bundle bundle) {
-		logger.trace("Received bundle: {}", bundle);
+		logger.debug("Received bundle: {}", bundle);
 		bundle.setGeneratedAtTime(Instant.now().toEpochMilli());
-		String insertStatement = Gql.generateInsertStatement(bundle);
+		bolt.getDriver().executableQuery(Gql.getInsertStatement(bundle));
 	}
 }
