@@ -2,7 +2,6 @@ package com.provframework.capture;
 
 import java.time.Instant;
 
-import org.neo4j.driver.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
