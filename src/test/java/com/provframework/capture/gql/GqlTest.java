@@ -9,9 +9,10 @@ class GqlTest {
     
     @Test
     void testGetInsertStatement() {
-        assertEquals(Gql.getInsertStatement(new Bundle() {{
-            setGeneratedAtTime(1625077800000L);
-        }}),
-        "CREATE (bundle:`Bundle` {generatedAtTime: 1625077800000})");
+        assertEquals("CREATE (bundle:`Bundle` {generatedAtTime: 1625077800000})",
+            Gql.getInsertStatement(new Bundle() {{
+                setGeneratedAtTime(1625077800000L);
+            }})
+        );
     }
 }

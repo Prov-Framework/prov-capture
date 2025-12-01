@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'jacoco'
+	id "org.sonarqube" version "7.0.1.6134"
 }
 
 group = 'com.provframework'
@@ -54,9 +55,21 @@ jacoco {
 jacocoTestReport {
 	dependsOn test // Ensure tests run before report generation
 	reports {
-		xml.required = false
+		xml.required = true
 		csv.required = false
 		html.required = true
 		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "prov-capture"
+  		property "sonar.projectName", "prov-capture" 
+  		property "sonar.host.url", "http://localhost:9000"
+  		property "sonar.token", ""
+		property "sonar.jacoco.reportPaths", "$buildDir/jacoco/test.exec"
+		// If you're generating XML reports, use:
+		// property "sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
 	}
 }

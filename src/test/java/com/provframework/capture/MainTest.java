@@ -34,10 +34,11 @@ class MainTest {
 
 	@Test
 	void listenGeneratesStatementAndExecutesQuery() throws Exception {
-		Main main = new Main();
-
 		// mock Bolt and driver
 		Bolt mockBolt = mock(Bolt.class);
+
+		Main main = new Main(mockBolt);
+
 		// record executions using a shared flag
 		java.util.concurrent.atomic.AtomicBoolean executedFlag = new java.util.concurrent.atomic.AtomicBoolean(false);
 

@@ -4,11 +4,11 @@ import java.time.Instant;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 import com.provframework.capture.dbdriver.Bolt;
 import com.provframework.capture.gql.Gql;
@@ -16,12 +16,16 @@ import com.provframework.capture.prov.Bundle;
 
 @SpringBootApplication
 @EnableKafka
+@Component
 public class Main {
 
 	private Logger logger = LoggerFactory.getLogger(Main.class);
 
-	@Autowired
-	Bolt bolt;
+	private Bolt bolt;
+
+	public Main(Bolt bolt) {
+		this.bolt = bolt;
+	}
 	
 	public static void main(String[] args) {
 		SpringApplication.run(Main.class, args);
