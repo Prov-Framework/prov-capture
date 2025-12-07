@@ -1,4 +1,4 @@
-package com.provframework.capture.dbdriver;
+package com.provframework.capture.driver;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

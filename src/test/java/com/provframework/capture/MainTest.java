@@ -13,7 +13,8 @@ import org.mockito.Mockito;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.boot.SpringApplication;
 
-import com.provframework.capture.dbdriver.Bolt;
+import com.provframework.capture.driver.Bolt;
+import com.provframework.capture.driver.Rdf4j;
 import com.provframework.capture.prov.Bundle;
 
 import org.neo4j.driver.Driver;
@@ -36,8 +37,9 @@ class MainTest {
 	void listenGeneratesStatementAndExecutesQuery() throws Exception {
 		// mock Bolt and driver
 		Bolt mockBolt = mock(Bolt.class);
+		Rdf4j mockRdf4j = mock(Rdf4j.class);
 
-		Main main = new Main(mockBolt);
+		Main main = new Main(mockBolt, mockRdf4j);
 
 		// record executions using a shared flag
 		java.util.concurrent.atomic.AtomicBoolean executedFlag = new java.util.concurrent.atomic.AtomicBoolean(false);

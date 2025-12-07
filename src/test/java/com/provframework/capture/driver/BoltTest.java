@@ -1,4 +1,4 @@
-package com.provframework.capture.dbdriver;
+package com.provframework.capture.driver;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -7,6 +7,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
+
+import com.provframework.capture.driver.Bolt;
 
 class BoltTest {
 

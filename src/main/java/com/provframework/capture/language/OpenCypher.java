@@ -1,13 +1,13 @@
-package com.provframework.capture.gql;
+package com.provframework.capture.language;
 
 import com.provframework.capture.prov.Bundle;
 
 import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.Node;
 
-public class Gql {
+public class OpenCypher {
 
-    private Gql() {
+    private OpenCypher() {
         // static class
     }
 
