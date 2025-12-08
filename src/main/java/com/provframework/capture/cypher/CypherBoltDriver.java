@@ -1,4 +1,4 @@
-package com.provframework.capture.driver;
+package com.provframework.capture.cypher;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -8,7 +8,7 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 
 @Service
-public class Bolt {
+public class CypherBoltDriver {
     @SuppressWarnings("unused")
     private final String uri;
     @SuppressWarnings("unused")
@@ -17,7 +17,7 @@ public class Bolt {
     private final String password;
     private final Driver driver;
 
-    public Bolt(@Value("${bolt.uri}") String uri,
+    public CypherBoltDriver(@Value("${bolt.uri}") String uri,
                 @Value("${bolt.username}") String username,
                 @Value("${bolt.password}") String password) {
         this.uri = uri;

@@ -36,6 +36,11 @@ dependencies {
 	implementation 'org.eclipse.rdf4j:rdf4j-model:5.2.0'
 	implementation 'org.eclipse.rdf4j:rdf4j-repository-sparql:5.2.0'
 
+	// Gremlin
+	implementation 'org.apache.tinkerpop:gremlin-driver:3.8.0'
+	// JanusGraph
+	implementation 'org.janusgraph:janusgraph-driver:1.2.0-20251114-142114.b424a8f'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

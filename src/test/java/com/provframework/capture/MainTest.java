@@ -7,15 +7,17 @@ import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
 
+import org.apache.tinkerpop.gremlin.util.Gremlin;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.boot.SpringApplication;
 
-import com.provframework.capture.driver.Bolt;
-import com.provframework.capture.driver.Rdf4j;
+import com.provframework.capture.cypher.CypherBoltDriver;
+import com.provframework.capture.gremlin.GremlinTinkerpopDriver;
 import com.provframework.capture.prov.Bundle;
+import com.provframework.capture.sparql.SparqlRestDriver;
 
 import org.neo4j.driver.Driver;
 
@@ -36,10 +38,11 @@ class MainTest {
 	@Test
 	void listenGeneratesStatementAndExecutesQuery() throws Exception {
 		// mock Bolt and driver
-		Bolt mockBolt = mock(Bolt.class);
-		Rdf4j mockRdf4j = mock(Rdf4j.class);
+		CypherBoltDriver mockBolt = mock(CypherBoltDriver.class);
+		SparqlRestDriver mockRdf4j = mock(SparqlRestDriver.class);
+		GremlinTinkerpopDriver mockGremlin = mock(GremlinTinkerpopDriver.class);
 
-		Main main = new Main(mockBolt, mockRdf4j);
+		Main main = new Main(mockBolt, mockRdf4j, mockGremlin);
 
 		// record executions using a shared flag
 		java.util.concurrent.atomic.AtomicBoolean executedFlag = new java.util.concurrent.atomic.AtomicBoolean(false);

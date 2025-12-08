@@ -1,13 +1,13 @@
-package com.provframework.capture.language;
+package com.provframework.capture.cypher;
 
 import com.provframework.capture.prov.Bundle;
 
 import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.Node;
 
-public class OpenCypher {
+public class CypherLang {
 
-    private OpenCypher() {
+    private CypherLang() {
         // static class
     }
 

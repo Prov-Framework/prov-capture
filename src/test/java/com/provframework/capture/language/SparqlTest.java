@@ -6,11 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import com.provframework.capture.prov.Bundle;
+import com.provframework.capture.sparql.SparqlLang;
 
 class SparqlTest {
     @Test
     void testGetInsertStatement() {
-        String statement = Sparql.getInsertStatement(new Bundle() {{
+        String statement = SparqlLang.getInsertStatement(new Bundle() {{
                 setGeneratedAtTime(1625077800000L);
             }}, "b817aa2c-8297-47d0-a599-aab1464c6620");
         assertTrue(statement.contains("PREFIX prov: <http://www.w3.org/ns/prov#>"));

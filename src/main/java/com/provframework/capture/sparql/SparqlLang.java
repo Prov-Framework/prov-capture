@@ -1,4 +1,4 @@
-package com.provframework.capture.language;
+package com.provframework.capture.sparql;
 
 import java.util.UUID;
 
@@ -14,7 +14,7 @@ import org.eclipse.rdf4j.sparqlbuilder.rdf.Rdf;
 
 import com.provframework.capture.prov.Bundle;
 
-public class Sparql {
+public class SparqlLang {
     
     private static IRI provIRI = Values.iri(PROV.NAMESPACE);
     private static Prefix provPrefix = SparqlBuilder.prefix(PROV.PREFIX, provIRI);
@@ -26,7 +26,7 @@ public class Sparql {
     private static String aBox = "abox"; // Assertion Box (as apposed to Terminological Box)
     private static Prefix aBoxPrefix = SparqlBuilder.prefix(aBox, aBoxIRI);
 
-    private Sparql() {
+    private SparqlLang() {
         // static class
     }
 

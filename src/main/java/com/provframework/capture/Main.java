@@ -10,11 +10,13 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.provframework.capture.driver.Bolt;
-import com.provframework.capture.driver.Rdf4j;
-import com.provframework.capture.language.OpenCypher;
-import com.provframework.capture.language.Sparql;
+import com.provframework.capture.cypher.CypherBoltDriver;
+import com.provframework.capture.cypher.CypherLang;
+import com.provframework.capture.gremlin.GremlinLang;
+import com.provframework.capture.gremlin.GremlinTinkerpopDriver;
 import com.provframework.capture.prov.Bundle;
+import com.provframework.capture.sparql.SparqlRestDriver;
+import com.provframework.capture.sparql.SparqlLang;
 
 @SpringBootApplication
 @EnableKafka
@@ -23,12 +25,16 @@ public class Main {
 
 	private Logger logger = LoggerFactory.getLogger(Main.class);
 
-	private Bolt bolt;
-	private Rdf4j rdf4j;
+	private CypherBoltDriver cypherDriver;
+	private SparqlRestDriver sparqlDriver;
+	private GremlinTinkerpopDriver gremlinDriver;
 
-	public Main(Bolt bolt, Rdf4j rdf4j) {
-		this.bolt = bolt;
-		this.rdf4j = rdf4j;
+	public Main(CypherBoltDriver cypherDriver, 
+		SparqlRestDriver sparqlDriver, 
+		GremlinTinkerpopDriver gremlinDriver) {
+			this.cypherDriver = cypherDriver;
+			this.sparqlDriver = sparqlDriver;
+			this.gremlinDriver = gremlinDriver;
 	}
 	
 	public static void main(String[] args) {
@@ -40,10 +46,15 @@ public class Main {
 		bundle.setGeneratedAtTime(Instant.now().toEpochMilli());
 		logger.debug("Received bundle: {}", bundle);
 
-		// String statement = OpenCypher.getInsertStatement(bundle);
-		String statement = Sparql.getInsertStatement(bundle);
-		logger.debug("Generated Statement: {}", statement);
-		// bolt.getDriver().executableQuery(statement).execute();
-		rdf4j.getConnection().prepareUpdate(statement).execute();
+		// Cypher
+		// String statement = CypherLang.getInsertStatement(bundle);
+		// cypherDriver.getDriver().executableQuery(statement).execute();
+
+		// SPARQL
+		// String statement = SparqlLang.getInsertStatement(bundle);
+		// sparqlDriver.getConnection().prepareUpdate(statement).execute();
+
+		// Gremlin
+		GremlinLang.getInsertStatement(bundle, gremlinDriver.getGraphTraversalSource()).next();
 	}
 }
