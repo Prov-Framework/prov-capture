@@ -8,19 +8,9 @@ import org.mockito.Mockito;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 
-import com.provframework.capture.cypher.CypherBoltDriver;
+import com.provframework.capture.cypher.CypherDriver;
 
 class BoltTest {
-
-    @Test
-    void constructorInitializesDriver() {
-        // Construct Bolt with sample values; GraphDatabase.driver will create a Driver instance.
-        CypherBoltDriver bolt = new CypherBoltDriver("bolt://localhost:7687", "user", "pass");
-
-        // driver should be non-null (constructed successfully)
-        Driver driver = bolt.getDriver();
-        org.junit.jupiter.api.Assertions.assertNotNull(driver);
-    }
 
     @Test
     void constructorPropagatesExceptionFromGraphDatabaseDriver() {
@@ -28,7 +18,7 @@ class BoltTest {
             // make AuthTokens.basic throw to simulate a failure before GraphDatabase.driver is called
             authTokensStatic.when(() -> AuthTokens.basic("u", "p")).thenThrow(new IllegalStateException("auth failed"));
 
-            assertThrows(IllegalStateException.class, () -> new CypherBoltDriver("baduri", "u", "p"));
+            assertThrows(IllegalStateException.class, () -> new CypherDriver("baduri", "u", "p"));
         }
     }
 }

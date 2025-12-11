@@ -10,12 +10,12 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.provframework.capture.cypher.CypherBoltDriver;
+import com.provframework.capture.cypher.CypherDriver;
 import com.provframework.capture.cypher.CypherLang;
 import com.provframework.capture.gremlin.GremlinLang;
-import com.provframework.capture.gremlin.GremlinTinkerpopDriver;
+import com.provframework.capture.gremlin.GremlinDriver;
 import com.provframework.capture.prov.Bundle;
-import com.provframework.capture.sparql.SparqlRestDriver;
+import com.provframework.capture.sparql.SparqlDriver;
 import com.provframework.capture.sparql.SparqlLang;
 
 @SpringBootApplication
@@ -25,13 +25,13 @@ public class Main {
 
 	private Logger logger = LoggerFactory.getLogger(Main.class);
 
-	private CypherBoltDriver cypherDriver;
-	private SparqlRestDriver sparqlDriver;
-	private GremlinTinkerpopDriver gremlinDriver;
+	private CypherDriver cypherDriver;
+	private SparqlDriver sparqlDriver;
+	private GremlinDriver gremlinDriver;
 
-	public Main(CypherBoltDriver cypherDriver, 
-		SparqlRestDriver sparqlDriver, 
-		GremlinTinkerpopDriver gremlinDriver) {
+	public Main(CypherDriver cypherDriver, 
+		SparqlDriver sparqlDriver, 
+		GremlinDriver gremlinDriver) {
 			this.cypherDriver = cypherDriver;
 			this.sparqlDriver = sparqlDriver;
 			this.gremlinDriver = gremlinDriver;
@@ -46,15 +46,8 @@ public class Main {
 		bundle.setGeneratedAtTime(Instant.now().toEpochMilli());
 		logger.debug("Received bundle: {}", bundle);
 
-		// Cypher
-		// String statement = CypherLang.getInsertStatement(bundle);
-		// cypherDriver.getDriver().executableQuery(statement).execute();
-
-		// SPARQL
-		// String statement = SparqlLang.getInsertStatement(bundle);
-		// sparqlDriver.getConnection().prepareUpdate(statement).execute();
-
-		// Gremlin
-		GremlinLang.getInsertStatement(bundle, gremlinDriver.getGraphTraversalSource()).next();
+		cypherDriver.insertBundle(bundle);
+		// sparqlDriver.insertBundle(bundle);
+		// gremlinDriver.insertBundle(bundle);
 	}
 }

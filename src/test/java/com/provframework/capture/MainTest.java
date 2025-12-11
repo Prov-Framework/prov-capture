@@ -3,21 +3,19 @@ package com.provframework.capture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
 
-import org.apache.tinkerpop.gremlin.util.Gremlin;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.boot.SpringApplication;
 
-import com.provframework.capture.cypher.CypherBoltDriver;
-import com.provframework.capture.gremlin.GremlinTinkerpopDriver;
+import com.provframework.capture.cypher.CypherDriver;
+import com.provframework.capture.gremlin.GremlinDriver;
 import com.provframework.capture.prov.Bundle;
-import com.provframework.capture.sparql.SparqlRestDriver;
+import com.provframework.capture.sparql.SparqlDriver;
 
 import org.neo4j.driver.Driver;
 
@@ -38,9 +36,9 @@ class MainTest {
 	@Test
 	void listenGeneratesStatementAndExecutesQuery() throws Exception {
 		// mock Bolt and driver
-		CypherBoltDriver mockBolt = mock(CypherBoltDriver.class);
-		SparqlRestDriver mockRdf4j = mock(SparqlRestDriver.class);
-		GremlinTinkerpopDriver mockGremlin = mock(GremlinTinkerpopDriver.class);
+		CypherDriver mockBolt = mock(CypherDriver.class);
+		SparqlDriver mockRdf4j = mock(SparqlDriver.class);
+		GremlinDriver mockGremlin = mock(GremlinDriver.class);
 
 		Main main = new Main(mockBolt, mockRdf4j, mockGremlin);
 
@@ -72,9 +70,6 @@ class MainTest {
 			}
 		);
 
-		// when getDriver is called, return our proxy (it is assignable to Driver at runtime)
-		Mockito.when(mockBolt.getDriver()).thenReturn((Driver) driverProxy);
-
 		// inject the mocked bolt into Main (package-private field)
 		Field boltField = Main.class.getDeclaredField("bolt");
 		boltField.setAccessible(true);
@@ -87,9 +82,6 @@ class MainTest {
 
 		// after listen, generatedAtTime should be set
 		assertTrue(bundle.getGeneratedAtTime() != null && bundle.getGeneratedAtTime() > 0);
-
-		// verify bolt.getDriver() was called
-		verify(mockBolt).getDriver();
 
 		// and the exec implementation should have been executed
 		assertTrue(executedFlag.get(), "The driver's executable query should have been executed");
