@@ -46,8 +46,8 @@ public class Main {
 		bundle.setGeneratedAtTime(Instant.now().toEpochMilli());
 		logger.debug("Received bundle: {}", bundle);
 
-		cypherDriver.insertBundle(bundle);
+		// cypherDriver.insertBundle(bundle);
 		// sparqlDriver.insertBundle(bundle);
-		// gremlinDriver.insertBundle(bundle);
+		gremlinDriver.insertBundle(bundle);
 	}
 }
