@@ -10,12 +10,12 @@ import com.provframework.capture.prov.Bundle;
 @Service
 public class SparqlDriver {
     @SuppressWarnings("unused")
-    private final String endpoint;
+    private final String uri;
     private final RepositoryConnection connection;
 
-    public SparqlDriver(@Value("${sparql.endpoint}") String endpoint) {
-        this.endpoint = endpoint;
-        this.connection = new SPARQLRepository(endpoint, endpoint).getConnection();
+    public SparqlDriver(@Value("${sparql.uri}") String uri) {
+        this.uri = uri;
+        this.connection = new SPARQLRepository(uri, uri).getConnection();
     }
 
     public void insertBundle(Bundle bundle) {

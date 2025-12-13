@@ -12,4 +12,6 @@ cd /opt/janusgraph/bin
 
 :remote connect tinkerpop.server conf/remote.yaml
 :remote console
+
+g.V()
 ```
