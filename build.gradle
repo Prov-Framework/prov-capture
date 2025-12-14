@@ -34,7 +34,8 @@ dependencies {
 	// SPARQL
 	implementation 'org.eclipse.rdf4j:rdf4j-sparqlbuilder:5.2.0'
 	implementation 'org.eclipse.rdf4j:rdf4j-model:5.2.0'
-	implementation 'org.eclipse.rdf4j:rdf4j-repository-sparql:5.2.0'
+	implementation 'org.eclipse.rdf4j:rdf4j-repository-sail:5.2.0'
+	implementation 'org.eclipse.rdf4j:rdf4j-sail-memory:5.2.0'
 
 	// Gremlin
 	implementation 'org.apache.tinkerpop:gremlin-driver:3.8.0'

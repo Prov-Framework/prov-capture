@@ -3,6 +3,7 @@ package com.provframework.capture.sparql;
 import java.util.UUID;
 
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.util.Values;
 import org.eclipse.rdf4j.model.vocabulary.PROV;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
@@ -11,9 +12,14 @@ import org.eclipse.rdf4j.sparqlbuilder.core.SparqlBuilder;
 import org.eclipse.rdf4j.sparqlbuilder.core.query.InsertDataQuery;
 import org.eclipse.rdf4j.sparqlbuilder.graphpattern.GraphPatterns;
 import org.eclipse.rdf4j.sparqlbuilder.rdf.Rdf;
+import org.springframework.stereotype.Component;
 
+import com.provframework.capture.prov.Activity;
+import com.provframework.capture.prov.Agent;
 import com.provframework.capture.prov.Bundle;
+import com.provframework.capture.prov.Entity;
 
+@Component
 public class SparqlLang {
     
     private static IRI provIRI = Values.iri(PROV.NAMESPACE);
@@ -26,19 +32,27 @@ public class SparqlLang {
     private static String aBox = "abox"; // Assertion Box (as apposed to Terminological Box)
     private static Prefix aBoxPrefix = SparqlBuilder.prefix(aBox, aBoxIRI);
 
-    private SparqlLang() {
-        // static class
-    }
-
-    public static String getInsertStatement(Bundle bundle) {
-        return getInsertStatement(bundle, UUID.randomUUID().toString());
-    }
-
-    public static String getInsertStatement(Bundle bundle, String bundleUUID) {
+    public InsertDataQuery getInsertStatement(Bundle bundle) {
         InsertDataQuery statement = new InsertDataQuery();
+        
+        insertPrefixes(statement);
+        insertBundle(statement, bundle);
+
+        // bundle.getEntities().parallelStream().forEach(entity -> insertEntity(statement, entity));
+        // bundle.getActivities().parallelStream().forEach(activity -> insertActivity(statement, activity));
+        // bundle.getAgents().parallelStream().forEach(agent -> insertAgent(statement, agent));
+
+        return statement;
+    }
+
+    private void insertPrefixes(InsertDataQuery statement) {
         statement.prefix(provPrefix);
         statement.prefix(aBoxPrefix);
         statement.prefix(rdfPrefix);
+    }
+
+    private void insertBundle(InsertDataQuery statement, Bundle bundle) {
+        String bundleUUID = UUID.randomUUID().toString();
 
         statement.insertData(GraphPatterns.tp(
             Values.iri(aBox + ":" + bundleUUID),
@@ -50,7 +64,17 @@ public class SparqlLang {
             PROV.GENERATED_AT_TIME,
             Rdf.literalOf(bundle.getGeneratedAtTime())
         ));
+    }
 
-        return statement.getQueryString();
+    private void insertEntity(InsertDataQuery statement, Entity entity) {
+        
+    }
+
+    private void insertActivity(InsertDataQuery statement, Activity activity) {
+        
+    }
+
+    private void insertAgent(InsertDataQuery statement, Agent agent) {
+        
     }
 }
