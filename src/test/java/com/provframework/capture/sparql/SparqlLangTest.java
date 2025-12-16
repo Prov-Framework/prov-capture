@@ -2,7 +2,7 @@ package com.provframework.capture.sparql;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.math.BigInteger;
+import java.util.List;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
@@ -16,28 +16,75 @@ import org.eclipse.rdf4j.rio.RDFHandler;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.eclipse.rdf4j.sparqlbuilder.core.query.InsertDataQuery;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.provframework.capture.prov.Bundle;
+import com.provframework.capture.prov.Entity;
 
 class SparqlLangTest {
+
+    Bundle bundle;
+    Model model;
+    RDFHandler handler;
+    SparqlLang sparqlLang;
+    static Repository repository = new SailRepository(new MemoryStore());
+
+    @BeforeAll
+    static void initRepo() {
+        repository.init();
+    }
+
+    @BeforeEach
+    void setup() {
+        this.bundle = new Bundle();
+        this.bundle.setGeneratedAtTime(1625077800000L);
+        this.sparqlLang = new SparqlLang();
+    }
+
     @Test
-    void testGetInsertStatement() {
-        Bundle bundle = new Bundle();
+    void testBundleInsert() {
         bundle.setGeneratedAtTime(1625077800000L);
 
-        InsertDataQuery statement = new SparqlLang().getInsertStatement(bundle);
+        InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
+        @SuppressWarnings("unused")
+        String queryString = statement.getQueryString(); //For debugging
 
-        Model model = new ModelBuilder().build();
-        RDFHandler handler = new StatementCollector(model);
-        Repository repository = new SailRepository(new MemoryStore());
-        repository.init();
+        updateModel(statement);
+
+        assertTrue(model.contains(null, RDF.TYPE, PROV.BUNDLE));
+        assertTrue(model.contains(null, PROV.GENERATED_AT_TIME, Values.literal(1625077800000L)));
+    }
+
+    @Test
+    void testBundleWithOneEntityInsert() {
+        Entity entity = new Entity();
+        entity.setId("entity1");
+
+        bundle.setEntities(List.of(entity));
+
+        InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
+        @SuppressWarnings("unused")
+        String queryString = statement.getQueryString(); //For debugging
+        
+        updateModel(statement);
+        
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, entity.getId()), 
+            RDF.TYPE, 
+            PROV.ENTITY
+        ));
+    }
+
+    private void updateModel(InsertDataQuery statement) {
+        // Re-initialize model and handler to clear old data
+        this.model = new ModelBuilder().build();
+        this.handler = new StatementCollector(model);
+
         try (RepositoryConnection connection = repository.getConnection()) {
             connection.prepareUpdate(statement.getQueryString()).execute();
             connection.exportStatements(null, null, null, false, handler);
         }
-
-        assertTrue(model.contains(null, RDF.TYPE, PROV.BUNDLE));
-        assertTrue(model.contains(null, PROV.GENERATED_AT_TIME, Values.literal(new BigInteger("1625077800000"))));
     }
 }

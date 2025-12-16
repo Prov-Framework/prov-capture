@@ -3,7 +3,6 @@ package com.provframework.capture.sparql;
 import java.util.UUID;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.util.Values;
 import org.eclipse.rdf4j.model.vocabulary.PROV;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
@@ -11,7 +10,6 @@ import org.eclipse.rdf4j.sparqlbuilder.core.Prefix;
 import org.eclipse.rdf4j.sparqlbuilder.core.SparqlBuilder;
 import org.eclipse.rdf4j.sparqlbuilder.core.query.InsertDataQuery;
 import org.eclipse.rdf4j.sparqlbuilder.graphpattern.GraphPatterns;
-import org.eclipse.rdf4j.sparqlbuilder.rdf.Rdf;
 import org.springframework.stereotype.Component;
 
 import com.provframework.capture.prov.Activity;
@@ -28,7 +26,8 @@ public class SparqlLang {
     private static IRI rdfIRI = Values.iri(RDF.NAMESPACE);
     private static Prefix rdfPrefix = SparqlBuilder.prefix(RDF.PREFIX, rdfIRI);
 
-    private static IRI aBoxIRI = Values.iri("http://example.org/abox#");
+    public static String aBoxNamespace = "http://example.org/abox#";
+    private static IRI aBoxIRI = Values.iri(aBoxNamespace);
     private static String aBox = "abox"; // Assertion Box (as apposed to Terminological Box)
     private static Prefix aBoxPrefix = SparqlBuilder.prefix(aBox, aBoxIRI);
 
@@ -38,7 +37,9 @@ public class SparqlLang {
         insertPrefixes(statement);
         insertBundle(statement, bundle);
 
-        // bundle.getEntities().parallelStream().forEach(entity -> insertEntity(statement, entity));
+        if (bundle.getEntities() != null) {
+            bundle.getEntities().parallelStream().forEach(entity -> insertEntity(statement, entity));
+        }
         // bundle.getActivities().parallelStream().forEach(activity -> insertActivity(statement, activity));
         // bundle.getAgents().parallelStream().forEach(agent -> insertAgent(statement, agent));
 
@@ -55,19 +56,23 @@ public class SparqlLang {
         String bundleUUID = UUID.randomUUID().toString();
 
         statement.insertData(GraphPatterns.tp(
-            Values.iri(aBox + ":" + bundleUUID),
+            Values.iri(aBoxNamespace, bundleUUID),
             RDF.TYPE,
             PROV.BUNDLE
         ));
         statement.insertData(GraphPatterns.tp(
-            Values.iri(aBox + ":" + bundleUUID),
+            Values.iri(aBoxNamespace, bundleUUID),
             PROV.GENERATED_AT_TIME,
-            Rdf.literalOf(bundle.getGeneratedAtTime())
+            Values.literal(bundle.getGeneratedAtTime())
         ));
     }
 
     private void insertEntity(InsertDataQuery statement, Entity entity) {
-        
+        statement.insertData(GraphPatterns.tp(
+            Values.iri(aBoxNamespace, entity.getId()),
+            RDF.TYPE,
+            PROV.ENTITY    
+        ));
     }
 
     private void insertActivity(InsertDataQuery statement, Activity activity) {
