@@ -1,6 +1,9 @@
 package com.provframework.capture.sparql;
 
+import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.util.Values;
@@ -37,11 +40,9 @@ public class SparqlLang {
         insertPrefixes(statement);
         insertBundle(statement, bundle);
 
-        if (bundle.getEntities() != null) {
-            bundle.getEntities().parallelStream().forEach(entity -> insertEntity(statement, entity));
-        }
-        // bundle.getActivities().parallelStream().forEach(activity -> insertActivity(statement, activity));
-        // bundle.getAgents().parallelStream().forEach(agent -> insertAgent(statement, agent));
+        getNonNullStream(bundle.getEntities()).forEach(entity -> insertEntity(statement, entity));
+        getNonNullStream(bundle.getActivities()).forEach(activity -> insertActivity(statement, activity));
+        getNonNullStream(bundle.getAgents()).forEach(agent -> insertAgent(statement, agent));
 
         return statement;
     }
@@ -73,6 +74,33 @@ public class SparqlLang {
             RDF.TYPE,
             PROV.ENTITY    
         ));
+
+        getNonNullStream(entity.getWasDerivedFrom())
+        .forEach(derivedFrom -> {
+            statement.insertData(GraphPatterns.tp(
+                Values.iri(aBoxNamespace, entity.getId()),
+                PROV.WAS_DERIVED_FROM,
+                Values.iri(aBoxNamespace, derivedFrom.getId())    
+            ));
+        });
+
+        getNonNullStream(entity.getWasGeneratedBy())
+        .forEach(generatedBy -> {
+            statement.insertData(GraphPatterns.tp(
+                Values.iri(aBoxNamespace, entity.getId()),
+                PROV.WAS_GENERATED_BY,
+                Values.iri(aBoxNamespace, generatedBy.getId())    
+            ));
+        });
+
+        getNonNullStream(entity.getWasAttributedTo())
+        .forEach(attributedTo -> {
+            statement.insertData(GraphPatterns.tp(
+                Values.iri(aBoxNamespace, entity.getId()),
+                PROV.WAS_ATTRIBUTED_TO,
+                Values.iri(aBoxNamespace, attributedTo.getId())    
+            ));
+        });
     }
 
     private void insertActivity(InsertDataQuery statement, Activity activity) {
@@ -81,5 +109,11 @@ public class SparqlLang {
 
     private void insertAgent(InsertDataQuery statement, Agent agent) {
         
+    }
+
+    private <T> Stream<T> getNonNullStream(Collection<T> collection) {
+        return Stream.ofNullable(collection) // Null list check
+        .flatMap(Collection::stream) // Convert to stream
+        .filter(Objects::nonNull); // Null element check
     }
 }

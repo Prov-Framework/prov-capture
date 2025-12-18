@@ -44,7 +44,7 @@ class SparqlLangTest {
     }
 
     @Test
-    void testBundleInsert() {
+    void testBundleOnly() {
         bundle.setGeneratedAtTime(1625077800000L);
 
         InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
@@ -58,7 +58,7 @@ class SparqlLangTest {
     }
 
     @Test
-    void testBundleWithOneEntityInsert() {
+    void testEntity() {
         Entity entity = new Entity();
         entity.setId("entity1");
 
@@ -74,6 +74,31 @@ class SparqlLangTest {
             Values.iri(SparqlLang.aBoxNamespace, entity.getId()), 
             RDF.TYPE, 
             PROV.ENTITY
+        ));
+    }
+
+    @Test
+    void testDerivedEntity() {
+        Entity entity = new Entity();
+        entity.setId("entity1");
+
+        Entity entity2 = new Entity();
+        entity2.setId("entity2");
+
+        entity2.setWasDerivedFrom(List.of(entity));
+
+        bundle.setEntities(List.of(entity2));
+
+        InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
+        @SuppressWarnings("unused")
+        String queryString = statement.getQueryString(); //For debugging
+        
+        updateModel(statement);
+        
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, entity2.getId()), 
+            PROV.WAS_DERIVED_FROM, 
+            Values.iri(SparqlLang.aBoxNamespace, entity.getId())
         ));
     }
 
