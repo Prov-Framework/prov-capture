@@ -2,13 +2,16 @@ package com.provframework.capture.sparql;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.rdf4j.common.net.ParsedIRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.util.Values;
 import org.eclipse.rdf4j.model.vocabulary.PROV;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
@@ -20,8 +23,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.provframework.capture.kafka.BundleDeserializer;
 import com.provframework.capture.prov.Bundle;
-import com.provframework.capture.prov.Entity;
 
 class SparqlLangTest {
 
@@ -38,67 +41,96 @@ class SparqlLangTest {
 
     @BeforeEach
     void setup() {
-        this.bundle = new Bundle();
-        this.bundle.setGeneratedAtTime(1625077800000L);
         this.sparqlLang = new SparqlLang();
     }
 
     @Test
-    void testBundleOnly() {
-        bundle.setGeneratedAtTime(1625077800000L);
+    void testDerivedEntity() throws IOException {
+        String message = new String(getClass().getResourceAsStream("/bundle.json").readAllBytes());
+        try(BundleDeserializer deser = new BundleDeserializer()) {
+            this.bundle = deser.deserialize("prov", message.getBytes());
+        }
+        
+        Long generatedAtTime = 1625077800000L;
+        bundle.setGeneratedAtTime(generatedAtTime);
 
         InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
         @SuppressWarnings("unused")
         String queryString = statement.getQueryString(); //For debugging
-
+        
         updateModel(statement);
 
         assertTrue(model.contains(null, RDF.TYPE, PROV.BUNDLE));
-        assertTrue(model.contains(null, PROV.GENERATED_AT_TIME, Values.literal(1625077800000L)));
-    }
-
-    @Test
-    void testEntity() {
-        Entity entity = new Entity();
-        entity.setId("entity1");
-
-        bundle.setEntities(List.of(entity));
-
-        InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
-        @SuppressWarnings("unused")
-        String queryString = statement.getQueryString(); //For debugging
-        
-        updateModel(statement);
-        
         assertTrue(model.contains(
-            Values.iri(SparqlLang.aBoxNamespace, entity.getId()), 
+            null, 
+            PROV.GENERATED_AT_TIME, 
+            Values.literal(generatedAtTime)
+        ));
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 2").toString()), 
             RDF.TYPE, 
             PROV.ENTITY
         ));
-    }
 
-    @Test
-    void testDerivedEntity() {
-        Entity entity = new Entity();
-        entity.setId("entity1");
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 2").toString()), 
+            RDFS.LABEL, 
+            Values.literal("Entity 2")
+        ));
 
-        Entity entity2 = new Entity();
-        entity2.setId("entity2");
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 1").toString()), 
+            RDF.TYPE, 
+            PROV.ENTITY
+        ));
 
-        entity2.setWasDerivedFrom(List.of(entity));
-
-        bundle.setEntities(List.of(entity2));
-
-        InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
-        @SuppressWarnings("unused")
-        String queryString = statement.getQueryString(); //For debugging
-        
-        updateModel(statement);
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 1").toString()), 
+            RDFS.LABEL, 
+            Values.literal("Entity 1")
+        ));
         
         assertTrue(model.contains(
-            Values.iri(SparqlLang.aBoxNamespace, entity2.getId()), 
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 2").toString()), 
             PROV.WAS_DERIVED_FROM, 
-            Values.iri(SparqlLang.aBoxNamespace, entity.getId())
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 1").toString())
+        ));
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Person Agent").toString()), 
+            RDF.TYPE, 
+            PROV.AGENT
+        ));
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Person Agent").toString()), 
+            RDFS.LABEL, 
+            Values.literal("Person Agent")
+        ));
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 2").toString()), 
+            PROV.WAS_ATTRIBUTED_TO, 
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Person Agent").toString())
+        ));
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()), 
+            RDF.TYPE, 
+            PROV.ACTIVITY
+        ));
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()), 
+            RDFS.LABEL, 
+            Values.literal("Activity 2")
+        ));
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 2").toString()), 
+            PROV.WAS_GENERATED_BY, 
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString())
         ));
     }
 

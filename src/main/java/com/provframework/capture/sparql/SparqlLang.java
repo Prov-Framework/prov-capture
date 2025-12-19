@@ -5,10 +5,13 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import org.eclipse.rdf4j.common.net.ParsedIRI;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.util.Values;
 import org.eclipse.rdf4j.model.vocabulary.PROV;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.eclipse.rdf4j.model.vocabulary.XSD;
 import org.eclipse.rdf4j.sparqlbuilder.core.Prefix;
 import org.eclipse.rdf4j.sparqlbuilder.core.SparqlBuilder;
 import org.eclipse.rdf4j.sparqlbuilder.core.query.InsertDataQuery;
@@ -28,6 +31,12 @@ public class SparqlLang {
 
     private static IRI rdfIRI = Values.iri(RDF.NAMESPACE);
     private static Prefix rdfPrefix = SparqlBuilder.prefix(RDF.PREFIX, rdfIRI);
+
+    private static IRI rdfsIRI = Values.iri(RDFS.NAMESPACE);
+    private static Prefix rdfsPrefix = SparqlBuilder.prefix(RDFS.PREFIX, rdfsIRI);
+
+    private static IRI xsdIRI = Values.iri(XSD.NAMESPACE);
+    private static Prefix xsdPrefix = SparqlBuilder.prefix(XSD.PREFIX, xsdIRI);
 
     public static String aBoxNamespace = "http://example.org/abox#";
     private static IRI aBoxIRI = Values.iri(aBoxNamespace);
@@ -51,54 +60,55 @@ public class SparqlLang {
         statement.prefix(provPrefix);
         statement.prefix(aBoxPrefix);
         statement.prefix(rdfPrefix);
+        statement.prefix(rdfsPrefix);
+        statement.prefix(xsdPrefix);
     }
 
     private void insertBundle(InsertDataQuery statement, Bundle bundle) {
-        String bundleUUID = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString();
 
         statement.insertData(GraphPatterns.tp(
-            Values.iri(aBoxNamespace, bundleUUID),
+            Values.iri(aBoxNamespace, uuid),
             RDF.TYPE,
             PROV.BUNDLE
         ));
         statement.insertData(GraphPatterns.tp(
-            Values.iri(aBoxNamespace, bundleUUID),
+            Values.iri(aBoxNamespace, uuid),
             PROV.GENERATED_AT_TIME,
             Values.literal(bundle.getGeneratedAtTime())
         ));
     }
 
     private void insertEntity(InsertDataQuery statement, Entity entity) {
-        statement.insertData(GraphPatterns.tp(
-            Values.iri(aBoxNamespace, entity.getId()),
-            RDF.TYPE,
-            PROV.ENTITY    
-        ));
+        String entityIri = insertInstance(statement, entity.getId(), PROV.ENTITY).toString();
 
         getNonNullStream(entity.getWasDerivedFrom())
         .forEach(derivedFrom -> {
+            insertInstance(statement, derivedFrom.getId(), PROV.ENTITY);
             statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, entity.getId()),
+                Values.iri(aBoxNamespace, entityIri),
                 PROV.WAS_DERIVED_FROM,
-                Values.iri(aBoxNamespace, derivedFrom.getId())    
+                Values.iri(aBoxNamespace, ParsedIRI.create(derivedFrom.getId()).toString())    
             ));
         });
 
         getNonNullStream(entity.getWasGeneratedBy())
         .forEach(generatedBy -> {
+            insertInstance(statement, generatedBy.getId(), PROV.ACTIVITY);
             statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, entity.getId()),
+                Values.iri(aBoxNamespace, entityIri),
                 PROV.WAS_GENERATED_BY,
-                Values.iri(aBoxNamespace, generatedBy.getId())    
+                Values.iri(aBoxNamespace, ParsedIRI.create(generatedBy.getId()).toString())    
             ));
         });
 
         getNonNullStream(entity.getWasAttributedTo())
         .forEach(attributedTo -> {
+            insertInstance(statement, attributedTo.getId(), PROV.AGENT);
             statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, entity.getId()),
+                Values.iri(aBoxNamespace, entityIri),
                 PROV.WAS_ATTRIBUTED_TO,
-                Values.iri(aBoxNamespace, attributedTo.getId())    
+                Values.iri(aBoxNamespace, ParsedIRI.create(attributedTo.getId()).toString())    
             ));
         });
     }
@@ -109,6 +119,39 @@ public class SparqlLang {
 
     private void insertAgent(InsertDataQuery statement, Agent agent) {
         
+    }
+
+    /**
+     * Handles encoding and inserting client supplied IDs as the URI as well as the 
+     * original ID as a label. This small detail is important. A sequence number or
+     * a UUID could have been used as a URI, but that could create a entity coreference
+     * resolution problem later. If two separate bundles each reference the same agent 
+     * using an internal employee number, the desired bahavior is that the relationships
+     * from both bundles are added to the same instance. Put another way, there should be
+     * one node in the graph, with many edges added to it. If two nodes are added, a need
+     * will arise to merge the nodes, which is harder to do after the fact.
+     * @param statement
+     * @param id
+     * @param type
+     * @return
+     */
+    private ParsedIRI insertInstance(InsertDataQuery statement, String id, IRI type) {
+        ParsedIRI parsedIri = ParsedIRI.create(id);
+
+        statement.insertData(
+            GraphPatterns.tp(
+                Values.iri(aBoxNamespace, parsedIri.toString()),
+                RDF.TYPE,
+                type    
+            ),
+            GraphPatterns.tp(
+                Values.iri(aBoxNamespace, parsedIri.toString()),
+                RDFS.LABEL,
+                Values.literal(id)
+            )
+        );
+
+        return parsedIri;
     }
 
     private <T> Stream<T> getNonNullStream(Collection<T> collection) {
