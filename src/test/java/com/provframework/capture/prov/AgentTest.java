@@ -19,8 +19,7 @@ class AgentTest {
 
     @Test
     void constructorsAndSettersWork() {
-        Agent subordinate = new Agent();
-        List<Agent> actedList = Arrays.asList(subordinate);
+        List<String> actedList = Arrays.asList("subordinate");
 
         Agent a = new Agent("agent-1", actedList);
         assertEquals("agent-1", a.getId());

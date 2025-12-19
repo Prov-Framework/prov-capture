@@ -45,7 +45,7 @@ class SparqlLangTest {
     }
 
     @Test
-    void testDerivedEntity() throws IOException {
+    void testBundleToSparql() throws IOException {
         String message = new String(getClass().getResourceAsStream("/bundle.json").readAllBytes());
         try(BundleDeserializer deser = new BundleDeserializer()) {
             this.bundle = deser.deserialize("prov", message.getBytes());

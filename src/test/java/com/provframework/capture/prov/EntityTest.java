@@ -21,13 +21,9 @@ class EntityTest {
 
     @Test
     void constructorsAndSettersWork() {
-        Entity derived = new Entity();
-        Activity generated = new Activity();
-        Agent attributed = new Agent();
-
-        List<Entity> derivedList = Arrays.asList(derived);
-        List<Activity> generatedList = Arrays.asList(generated);
-        List<Agent> attributedList = Arrays.asList(attributed);
+        List<String> derivedList = Arrays.asList("derived");
+        List<String> generatedList = Arrays.asList("generated");
+        List<String> attributedList = Arrays.asList("attributed");
 
         Entity e = new Entity("ent-1", derivedList, generatedList, attributedList);
         assertEquals("ent-1", e.getId());

@@ -84,31 +84,31 @@ public class SparqlLang {
 
         getNonNullStream(entity.getWasDerivedFrom())
         .forEach(derivedFrom -> {
-            insertInstance(statement, derivedFrom.getId(), PROV.ENTITY);
+            insertInstance(statement, derivedFrom, PROV.ENTITY);
             statement.insertData(GraphPatterns.tp(
                 Values.iri(aBoxNamespace, entityIri),
                 PROV.WAS_DERIVED_FROM,
-                Values.iri(aBoxNamespace, ParsedIRI.create(derivedFrom.getId()).toString())    
+                Values.iri(aBoxNamespace, ParsedIRI.create(derivedFrom).toString())    
             ));
         });
 
         getNonNullStream(entity.getWasGeneratedBy())
         .forEach(generatedBy -> {
-            insertInstance(statement, generatedBy.getId(), PROV.ACTIVITY);
+            insertInstance(statement, generatedBy, PROV.ACTIVITY);
             statement.insertData(GraphPatterns.tp(
                 Values.iri(aBoxNamespace, entityIri),
                 PROV.WAS_GENERATED_BY,
-                Values.iri(aBoxNamespace, ParsedIRI.create(generatedBy.getId()).toString())    
+                Values.iri(aBoxNamespace, ParsedIRI.create(generatedBy).toString())    
             ));
         });
 
         getNonNullStream(entity.getWasAttributedTo())
         .forEach(attributedTo -> {
-            insertInstance(statement, attributedTo.getId(), PROV.AGENT);
+            insertInstance(statement, attributedTo, PROV.AGENT);
             statement.insertData(GraphPatterns.tp(
                 Values.iri(aBoxNamespace, entityIri),
                 PROV.WAS_ATTRIBUTED_TO,
-                Values.iri(aBoxNamespace, ParsedIRI.create(attributedTo.getId()).toString())    
+                Values.iri(aBoxNamespace, ParsedIRI.create(attributedTo).toString())    
             ));
         });
     }

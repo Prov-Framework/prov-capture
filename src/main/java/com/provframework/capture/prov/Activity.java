@@ -7,15 +7,15 @@ public class Activity {
     private String id; 
     private String startedAtTime;
     private String endedAtTime;
-    private List<Activity> wasInformedBy;
-    private List<Entity> used;
-    private List<Agent> wasAssociatedWith;
+    private List<String> wasInformedBy;
+    private List<String> used;
+    private List<String> wasAssociatedWith;
 
     public Activity() {
     }
 
     public Activity(String id, String startedAtTime, String endedAtTime, 
-        List<Activity> wasInformedBy, List<Entity> used, List<Agent> wasAssociatedWith) {
+        List<String> wasInformedBy, List<String> used, List<String> wasAssociatedWith) {
         this.id = id;
         this.startedAtTime = startedAtTime;
         this.endedAtTime = endedAtTime;
@@ -36,15 +36,15 @@ public class Activity {
         return endedAtTime;
     }
 
-    public List<Activity> getWasInformedBy() {
+    public List<String> getWasInformedBy() {
         return wasInformedBy;
     }
 
-    public List<Entity> getUsed() {
+    public List<String> getUsed() {
         return used;
     }
 
-    public List<Agent> getWasAssociatedWith() {
+    public List<String> getWasAssociatedWith() {
         return wasAssociatedWith;
     }
 
@@ -60,15 +60,15 @@ public class Activity {
         this.endedAtTime = endedAtTime;
     }
 
-    public void setWasInformedBy(List<Activity> wasInformedBy) {
+    public void setWasInformedBy(List<String> wasInformedBy) {
         this.wasInformedBy = wasInformedBy;
     }
 
-    public void setUsed(List<Entity> used) {
+    public void setUsed(List<String> used) {
         this.used = used;
     }
 
-    public void setWasAssociatedWith(List<Agent> wasAssociatedWith) {
+    public void setWasAssociatedWith(List<String> wasAssociatedWith) {
         this.wasAssociatedWith = wasAssociatedWith;
     }
 }

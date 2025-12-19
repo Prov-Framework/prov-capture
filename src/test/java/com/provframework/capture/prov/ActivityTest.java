@@ -23,13 +23,9 @@ class ActivityTest {
 
     @Test
     void constructorsAndSettersWork() {
-        Activity informed = new Activity();
-        Entity usedEntity = new Entity();
-        Agent assocAgent = new Agent();
-
-        List<Activity> informedList = Arrays.asList(informed);
-        List<Entity> usedList = Arrays.asList(usedEntity);
-        List<Agent> assocList = Arrays.asList(assocAgent);
+        List<String> informedList = Arrays.asList("informed");
+        List<String> usedList = Arrays.asList("usedEntity");
+        List<String> assocList = Arrays.asList("assocAgent");
 
         Activity a = new Activity("act-1", "2020-01-01T00:00:00Z", "2020-01-01T01:00:00Z", informedList, usedList, assocList);
 

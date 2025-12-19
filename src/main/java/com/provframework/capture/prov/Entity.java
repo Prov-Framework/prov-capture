@@ -5,14 +5,14 @@ import java.util.List;
 public class Entity {
 
     private String id;
-    private List<Entity> wasDerivedFrom;
-    private List<Activity> wasGeneratedBy;
-    private List<Agent> wasAttributedTo;
+    private List<String> wasDerivedFrom;
+    private List<String> wasGeneratedBy;
+    private List<String> wasAttributedTo;
     
     public Entity() {
     }
 
-    public Entity(String id, List<Entity> wasDerivedFrom, List<Activity> wasGeneratedBy, List<Agent> wasAttributedTo) {
+    public Entity(String id, List<String> wasDerivedFrom, List<String> wasGeneratedBy, List<String> wasAttributedTo) {
         this.id = id;
         this.wasDerivedFrom = wasDerivedFrom;
         this.wasGeneratedBy = wasGeneratedBy;
@@ -23,15 +23,15 @@ public class Entity {
         return id;
     }  
 
-    public List<Entity> getWasDerivedFrom() {
+    public List<String> getWasDerivedFrom() {
         return wasDerivedFrom;
     }
 
-    public List<Activity> getWasGeneratedBy() {
+    public List<String> getWasGeneratedBy() {
         return wasGeneratedBy;
     }
 
-    public List<Agent> getWasAttributedTo() {
+    public List<String> getWasAttributedTo() {
         return wasAttributedTo;
     }
 
@@ -39,15 +39,15 @@ public class Entity {
         this.id = id;
     }
 
-    public void setWasDerivedFrom(List<Entity> wasDerivedFrom) {
+    public void setWasDerivedFrom(List<String> wasDerivedFrom) {
         this.wasDerivedFrom = wasDerivedFrom;
     }  
 
-    public void setWasAttributedTo(List<Agent> wasAttributedTo) {
+    public void setWasAttributedTo(List<String> wasAttributedTo) {
         this.wasAttributedTo = wasAttributedTo;
     }
 
-    public void setWasGeneratedBy(List<Activity> wasGeneratedBy) {
+    public void setWasGeneratedBy(List<String> wasGeneratedBy) {
         this.wasGeneratedBy = wasGeneratedBy;
     }
 }

@@ -5,12 +5,12 @@ import java.util.List;
 public class Agent {
 
     private String id; 
-    private List<Agent> actedOnBehalfOf;
+    private List<String> actedOnBehalfOf;
 
     public Agent() {
     }
 
-    public Agent(String id, List<Agent> actedOnBehalfOf) {
+    public Agent(String id, List<String> actedOnBehalfOf) {
         this.id = id;
         this.actedOnBehalfOf = actedOnBehalfOf;
     }
@@ -19,7 +19,7 @@ public class Agent {
         return id;
     }
 
-    public List<Agent> getActedOnBehalfOf() {
+    public List<String> getActedOnBehalfOf() {
         return actedOnBehalfOf;
     }
 
@@ -27,7 +27,7 @@ public class Agent {
         this.id = id;
     }
 
-    public void setActedOnBehalfOf(List<Agent> actedOnBehalfOf) {
+    public void setActedOnBehalfOf(List<String> actedOnBehalfOf) {
         this.actedOnBehalfOf = actedOnBehalfOf;
     }
 }
