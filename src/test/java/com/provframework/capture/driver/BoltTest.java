@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
 
 import com.provframework.capture.cypher.CypherDriver;
 

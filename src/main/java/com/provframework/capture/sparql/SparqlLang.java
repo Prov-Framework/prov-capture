@@ -1,5 +1,6 @@
 package com.provframework.capture.sparql;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
@@ -114,11 +115,71 @@ public class SparqlLang {
     }
 
     private void insertActivity(InsertDataQuery statement, Activity activity) {
-        
+        String activityIri = insertInstance(statement, activity.getId(), PROV.ACTIVITY).toString();
+
+        if (activity.getStartedAtTime() != null) {
+            statement.insertData(
+                GraphPatterns.tp(
+                    Values.iri(aBoxNamespace, activityIri),
+                    PROV.STARTED_AT_TIME,
+                    Values.literal(OffsetDateTime.parse(activity.getStartedAtTime()))    
+                )
+            );
+        }
+
+        if (activity.getEndedAtTime() != null) {
+            statement.insertData(
+                GraphPatterns.tp(
+                    Values.iri(aBoxNamespace, activityIri),
+                    PROV.ENDED_AT_TIME,
+                    Values.literal(OffsetDateTime.parse(activity.getEndedAtTime()))
+                )
+            );
+        }
+
+        getNonNullStream(activity.getUsed())
+        .forEach(used -> {
+            insertInstance(statement, used, PROV.ENTITY);
+            statement.insertData(GraphPatterns.tp(
+                Values.iri(aBoxNamespace, activityIri),
+                PROV.USED,
+                Values.iri(aBoxNamespace, ParsedIRI.create(used).toString())    
+            ));
+        });
+
+        getNonNullStream(activity.getWasAssociatedWith())
+        .forEach(wasAssociatedWith -> {
+            insertInstance(statement, wasAssociatedWith, PROV.AGENT);
+            statement.insertData(GraphPatterns.tp(
+                Values.iri(aBoxNamespace, activityIri),
+                PROV.WAS_ASSOCIATED_WITH,
+                Values.iri(aBoxNamespace, ParsedIRI.create(wasAssociatedWith).toString())    
+            ));
+        });
+
+        getNonNullStream(activity.getWasInformedBy())
+        .forEach(wasInformedBy -> {
+            insertInstance(statement, wasInformedBy, PROV.ACTIVITY);
+            statement.insertData(GraphPatterns.tp(
+                Values.iri(aBoxNamespace, activityIri),
+                PROV.WAS_INFORMED_BY,
+                Values.iri(aBoxNamespace, ParsedIRI.create(wasInformedBy).toString())    
+            ));
+        });
     }
 
     private void insertAgent(InsertDataQuery statement, Agent agent) {
-        
+        String agentIri = insertInstance(statement, agent.getId(), PROV.AGENT).toString();
+
+        getNonNullStream(agent.getActedOnBehalfOf())
+        .forEach(actedOnBehalfOf -> {
+            insertInstance(statement, actedOnBehalfOf, PROV.AGENT);
+            statement.insertData(GraphPatterns.tp(
+                Values.iri(aBoxNamespace, agentIri),
+                PROV.ACTED_ON_BEHALF_OF,
+                Values.iri(aBoxNamespace, ParsedIRI.create(actedOnBehalfOf).toString())    
+            ));
+        });
     }
 
     /**

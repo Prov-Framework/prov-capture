@@ -3,7 +3,7 @@ package com.provframework.capture.sparql;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.List;
+import java.time.OffsetDateTime;
 
 import org.eclipse.rdf4j.common.net.ParsedIRI;
 import org.eclipse.rdf4j.model.Model;
@@ -51,8 +51,8 @@ class SparqlLangTest {
             this.bundle = deser.deserialize("prov", message.getBytes());
         }
         
-        Long generatedAtTime = 1625077800000L;
-        bundle.setGeneratedAtTime(generatedAtTime);
+        OffsetDateTime offsetDateTime = OffsetDateTime.parse("2025-01-25T11:33:10Z");
+        bundle.setGeneratedAtTime(offsetDateTime);
 
         InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
         @SuppressWarnings("unused")
@@ -64,7 +64,7 @@ class SparqlLangTest {
         assertTrue(model.contains(
             null, 
             PROV.GENERATED_AT_TIME, 
-            Values.literal(generatedAtTime)
+            Values.literal(offsetDateTime)
         ));
 
         assertTrue(model.contains(
@@ -132,6 +132,42 @@ class SparqlLangTest {
             PROV.WAS_GENERATED_BY, 
             Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString())
         ));
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()),
+            PROV.STARTED_AT_TIME,
+            Values.literal(OffsetDateTime.parse("2025-01-25T11:30:00Z"))
+        )); 
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()),
+            PROV.ENDED_AT_TIME,
+            Values.literal(OffsetDateTime.parse("2025-01-25T11:30:14Z"))
+        )); 
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()),
+            PROV.USED,
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 1").toString())
+        )); 
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()),
+            PROV.WAS_ASSOCIATED_WITH,
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Software Agent").toString())
+        )); 
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()),
+            PROV.WAS_INFORMED_BY,
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 1").toString())
+        )); 
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Person Agent").toString()),
+            PROV.ACTED_ON_BEHALF_OF,
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Organization Agent").toString())
+        )); 
     }
 
     private void updateModel(InsertDataQuery statement) {

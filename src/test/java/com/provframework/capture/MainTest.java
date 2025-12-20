@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import java.lang.reflect.Field;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -76,7 +74,7 @@ class MainTest {
 		main.listen(bundle);
 
 		// after listen, generatedAtTime should be set
-		assertTrue(bundle.getGeneratedAtTime() != null && bundle.getGeneratedAtTime() > 0);
+		assertTrue(bundle.getGeneratedAtTime() != null && bundle.getGeneratedAtTime() != null);
 
 	}
 }

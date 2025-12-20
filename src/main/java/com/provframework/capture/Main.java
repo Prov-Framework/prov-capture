@@ -1,6 +1,7 @@
 package com.provframework.capture;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class Main {
 
 	@KafkaListener(topics = "${kafka.topic}", groupId = "${kafka.groupId}")
 	public void listen(Bundle bundle) {
-		bundle.setGeneratedAtTime(Instant.now().toEpochMilli());
+		bundle.setGeneratedAtTime(OffsetDateTime.now());
 		logger.debug("Received bundle: {}", bundle);
 
 		// cypherDriver.insertBundle(bundle);

@@ -1,6 +1,9 @@
 package com.provframework.capture.language;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.time.OffsetDateTime;
+
 import org.junit.jupiter.api.Test;
 
 import com.provframework.capture.cypher.CypherLang;
@@ -10,9 +13,9 @@ class OpenCypherTest {
     
     @Test
     void testGetInsertStatement() {
-        assertEquals("CREATE (bundle:`Bundle` {generatedAtTime: 1625077800000})",
+        assertEquals("CREATE (bundle:`Bundle` {generatedAtTime: \"2025-01-25T11:33:10Z\"})",
             CypherLang.getInsertStatement(new Bundle() {{
-                setGeneratedAtTime(1625077800000L);
+                setGeneratedAtTime(OffsetDateTime.now());
             }})
         );
     }

@@ -1,12 +1,13 @@
 package com.provframework.capture.prov;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class Bundle {
     private List<Entity> entities;
     private List<Activity> activities;
     private List<Agent> agents;
-    private Long generatedAtTime;
+    private OffsetDateTime generatedAtTime;
 
     public List<Entity> getEntities() {
         return entities;
@@ -32,11 +33,11 @@ public class Bundle {
         this.agents = agents;
     }
 
-    public Long getGeneratedAtTime() {
+    public OffsetDateTime getGeneratedAtTime() {
         return generatedAtTime;
     }
 
-    public void setGeneratedAtTime(Long generatedAtTime) {
+    public void setGeneratedAtTime(OffsetDateTime generatedAtTime) {
         this.generatedAtTime = generatedAtTime;
     }
 }
