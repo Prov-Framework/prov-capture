@@ -51,9 +51,6 @@ class SparqlLangTest {
             this.bundle = deser.deserialize("prov", message.getBytes());
         }
         
-        OffsetDateTime offsetDateTime = OffsetDateTime.parse("2025-01-25T11:33:10Z");
-        bundle.setGeneratedAtTime(offsetDateTime);
-
         InsertDataQuery statement = this.sparqlLang.getInsertStatement(bundle);
         @SuppressWarnings("unused")
         String queryString = statement.getQueryString(); //For debugging
@@ -61,11 +58,7 @@ class SparqlLangTest {
         updateModel(statement);
 
         assertTrue(model.contains(null, RDF.TYPE, PROV.BUNDLE));
-        assertTrue(model.contains(
-            null, 
-            PROV.GENERATED_AT_TIME, 
-            Values.literal(offsetDateTime)
-        ));
+        assertTrue(model.contains(null, PROV.GENERATED_AT_TIME, null));
 
         assertTrue(model.contains(
             Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 2").toString()), 

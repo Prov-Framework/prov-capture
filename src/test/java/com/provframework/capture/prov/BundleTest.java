@@ -3,7 +3,6 @@ package com.provframework.capture.prov;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +16,6 @@ class BundleTest {
 		assertNull(b.getEntities());
 		assertNull(b.getActivities());
 		assertNull(b.getAgents());
-		assertNull(b.getGeneratedAtTime());
 	}
 
 	@Test
@@ -35,12 +33,10 @@ class BundleTest {
 		b.setEntities(entities);
 		b.setActivities(activities);
 		b.setAgents(agents);
-		b.setGeneratedAtTime(OffsetDateTime.now());
 
 		assertEquals(entities, b.getEntities());
 		assertEquals(activities, b.getActivities());
 		assertEquals(agents, b.getAgents());
-		assertEquals(98765L, b.getGeneratedAtTime());
 	}
 
 }

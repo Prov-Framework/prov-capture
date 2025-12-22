@@ -3,6 +3,8 @@ package com.provframework.capture.kafka;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 
 import com.provframework.capture.prov.Bundle;
@@ -18,11 +20,11 @@ class BundleDeserializerTest {
 	}
 
 	@Test
-	void deserializeValidJsonReturnsBundle() {
+	void deserializeValidJsonReturnsBundle() throws IOException {
 		try(BundleDeserializer deser = new BundleDeserializer()) {
-			String json = "{\"generatedAtTime\":12345}";
+			String json = new String(getClass().getResourceAsStream("/bundle.json").readAllBytes());
 			Bundle b = deser.deserialize("prov", json.getBytes());
-			assertEquals(12345L, b.getGeneratedAtTime());
+			assertEquals("Entity 2", b.getEntities().get(0).getId());
 		}
 	}
 

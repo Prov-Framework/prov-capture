@@ -1,6 +1,10 @@
 package com.provframework.capture;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -69,12 +73,8 @@ class MainTest {
 		);
 
 		Bundle bundle = new Bundle();
-		assertEquals(null, bundle.getGeneratedAtTime());
-
 		main.listen(bundle);
 
-		// after listen, generatedAtTime should be set
-		assertTrue(bundle.getGeneratedAtTime() != null && bundle.getGeneratedAtTime() != null);
-
+		assertNotNull(bundle);
 	}
 }

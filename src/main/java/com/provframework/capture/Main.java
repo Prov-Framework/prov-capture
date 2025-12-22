@@ -1,8 +1,5 @@
 package com.provframework.capture;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -44,11 +41,10 @@ public class Main {
 
 	@KafkaListener(topics = "${kafka.topic}", groupId = "${kafka.groupId}")
 	public void listen(Bundle bundle) {
-		bundle.setGeneratedAtTime(OffsetDateTime.now());
 		logger.debug("Received bundle: {}", bundle);
 
 		// cypherDriver.insertBundle(bundle);
-		// sparqlDriver.insertBundle(bundle);
-		gremlinDriver.insertBundle(bundle);
+		sparqlDriver.insertBundle(bundle);
+		// gremlinDriver.insertBundle(bundle);
 	}
 }

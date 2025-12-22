@@ -1,5 +1,7 @@
 package com.provframework.capture.gremlin;
 
+import java.time.OffsetDateTime;
+
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -14,6 +16,6 @@ public class GremlinLang {
 
     public static GraphTraversal<Vertex,Vertex> getInsertStatement(Bundle bundle, GraphTraversalSource g) {
         return g.addV("bundle")
-            .property("generatedAtTime", bundle.getGeneratedAtTime());
+            .property("generatedAtTime", OffsetDateTime.now().toString());
     }
 }

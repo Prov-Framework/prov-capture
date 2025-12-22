@@ -76,7 +76,7 @@ public class SparqlLang {
         statement.insertData(GraphPatterns.tp(
             Values.iri(aBoxNamespace, uuid),
             PROV.GENERATED_AT_TIME,
-            Values.literal(bundle.getGeneratedAtTime())
+            Values.literal(OffsetDateTime.now())
         ));
     }
 
