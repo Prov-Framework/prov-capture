@@ -3,7 +3,6 @@ package com.provframework.capture.sparql;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.eclipse.rdf4j.common.net.ParsedIRI;
@@ -48,7 +47,6 @@ public class SparqlLang {
         InsertDataQuery statement = new InsertDataQuery();
         
         insertPrefixes(statement);
-        insertBundle(statement, bundle);
 
         getNonNullStream(bundle.getEntities()).forEach(entity -> insertEntity(statement, entity));
         getNonNullStream(bundle.getActivities()).forEach(activity -> insertActivity(statement, activity));
@@ -63,21 +61,6 @@ public class SparqlLang {
         statement.prefix(rdfPrefix);
         statement.prefix(rdfsPrefix);
         statement.prefix(xsdPrefix);
-    }
-
-    private void insertBundle(InsertDataQuery statement, Bundle bundle) {
-        String uuid = UUID.randomUUID().toString();
-
-        statement.insertData(GraphPatterns.tp(
-            Values.iri(aBoxNamespace, uuid),
-            RDF.TYPE,
-            PROV.BUNDLE
-        ));
-        statement.insertData(GraphPatterns.tp(
-            Values.iri(aBoxNamespace, uuid),
-            PROV.GENERATED_AT_TIME,
-            Values.literal(OffsetDateTime.now())
-        ));
     }
 
     private void insertEntity(InsertDataQuery statement, Entity entity) {

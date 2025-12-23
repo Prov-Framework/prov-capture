@@ -57,9 +57,6 @@ class SparqlLangTest {
         
         updateModel(statement);
 
-        assertTrue(model.contains(null, RDF.TYPE, PROV.BUNDLE));
-        assertTrue(model.contains(null, PROV.GENERATED_AT_TIME, null));
-
         assertTrue(model.contains(
             Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 2").toString()), 
             RDF.TYPE, 
