@@ -1,9 +1,6 @@
 package com.provframework.capture.sparql;
 
 import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 import org.eclipse.rdf4j.common.net.ParsedIRI;
 import org.eclipse.rdf4j.model.IRI;
@@ -18,6 +15,7 @@ import org.eclipse.rdf4j.sparqlbuilder.core.query.InsertDataQuery;
 import org.eclipse.rdf4j.sparqlbuilder.graphpattern.GraphPatterns;
 import org.springframework.stereotype.Component;
 
+import com.provframework.capture.StreamUtils;
 import com.provframework.capture.prov.Activity;
 import com.provframework.capture.prov.Agent;
 import com.provframework.capture.prov.Bundle;
@@ -48,9 +46,9 @@ public class SparqlLang {
         
         insertPrefixes(statement);
 
-        getNonNullStream(bundle.getEntities()).forEach(entity -> insertEntity(statement, entity));
-        getNonNullStream(bundle.getActivities()).forEach(activity -> insertActivity(statement, activity));
-        getNonNullStream(bundle.getAgents()).forEach(agent -> insertAgent(statement, agent));
+        StreamUtils.getNonNullStream(bundle.getEntities()).forEach(entity -> insertEntity(statement, entity));
+        StreamUtils.getNonNullStream(bundle.getActivities()).forEach(activity -> insertActivity(statement, activity));
+        StreamUtils.getNonNullStream(bundle.getAgents()).forEach(agent -> insertAgent(statement, agent));
 
         return statement;
     }
@@ -66,7 +64,7 @@ public class SparqlLang {
     private void insertEntity(InsertDataQuery statement, Entity entity) {
         String entityIri = insertInstance(statement, entity.getId(), PROV.ENTITY).toString();
 
-        getNonNullStream(entity.getWasDerivedFrom())
+        StreamUtils.getNonNullStream(entity.getWasDerivedFrom())
         .forEach(derivedFrom -> {
             insertInstance(statement, derivedFrom, PROV.ENTITY);
             statement.insertData(GraphPatterns.tp(
@@ -76,7 +74,7 @@ public class SparqlLang {
             ));
         });
 
-        getNonNullStream(entity.getWasGeneratedBy())
+        StreamUtils.getNonNullStream(entity.getWasGeneratedBy())
         .forEach(generatedBy -> {
             insertInstance(statement, generatedBy, PROV.ACTIVITY);
             statement.insertData(GraphPatterns.tp(
@@ -86,7 +84,7 @@ public class SparqlLang {
             ));
         });
 
-        getNonNullStream(entity.getWasAttributedTo())
+        StreamUtils.getNonNullStream(entity.getWasAttributedTo())
         .forEach(attributedTo -> {
             insertInstance(statement, attributedTo, PROV.AGENT);
             statement.insertData(GraphPatterns.tp(
@@ -130,7 +128,7 @@ public class SparqlLang {
             );
         }
 
-        getNonNullStream(activity.getUsed())
+        StreamUtils.getNonNullStream(activity.getUsed())
         .forEach(used -> {
             insertInstance(statement, used, PROV.ENTITY);
             statement.insertData(GraphPatterns.tp(
@@ -140,7 +138,7 @@ public class SparqlLang {
             ));
         });
 
-        getNonNullStream(activity.getWasAssociatedWith())
+        StreamUtils.getNonNullStream(activity.getWasAssociatedWith())
         .forEach(wasAssociatedWith -> {
             insertInstance(statement, wasAssociatedWith, PROV.AGENT);
             statement.insertData(GraphPatterns.tp(
@@ -150,7 +148,7 @@ public class SparqlLang {
             ));
         });
 
-        getNonNullStream(activity.getWasInformedBy())
+        StreamUtils.getNonNullStream(activity.getWasInformedBy())
         .forEach(wasInformedBy -> {
             insertInstance(statement, wasInformedBy, PROV.ACTIVITY);
             statement.insertData(GraphPatterns.tp(
@@ -164,7 +162,7 @@ public class SparqlLang {
     private void insertAgent(InsertDataQuery statement, Agent agent) {
         String agentIri = insertInstance(statement, agent.getId(), PROV.AGENT).toString();
 
-        getNonNullStream(agent.getActedOnBehalfOf())
+        StreamUtils.getNonNullStream(agent.getActedOnBehalfOf())
         .forEach(actedOnBehalfOf -> {
             insertInstance(statement, actedOnBehalfOf, PROV.AGENT);
             statement.insertData(GraphPatterns.tp(
@@ -206,11 +204,5 @@ public class SparqlLang {
         );
 
         return parsedIri;
-    }
-
-    private <T> Stream<T> getNonNullStream(Collection<T> collection) {
-        return Stream.ofNullable(collection) // Null list check
-        .flatMap(Collection::stream) // Convert to stream
-        .filter(Objects::nonNull); // Null element check
     }
 }

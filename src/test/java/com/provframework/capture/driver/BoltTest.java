@@ -8,16 +8,18 @@ import org.mockito.Mockito;
 import org.neo4j.driver.AuthTokens;
 
 import com.provframework.capture.cypher.CypherDriver;
+import com.provframework.capture.cypher.CypherLang;
 
 class BoltTest {
 
     @Test
     void constructorPropagatesExceptionFromGraphDatabaseDriver() {
+        CypherLang cypherLang = Mockito.mock(CypherLang.class);
         try (MockedStatic<AuthTokens> authTokensStatic = Mockito.mockStatic(AuthTokens.class)) {
             // make AuthTokens.basic throw to simulate a failure before GraphDatabase.driver is called
             authTokensStatic.when(() -> AuthTokens.basic("u", "p")).thenThrow(new IllegalStateException("auth failed"));
 
-            assertThrows(IllegalStateException.class, () -> new CypherDriver("baduri", "u", "p"));
+            assertThrows(IllegalStateException.class, () -> new CypherDriver("baduri", "u", "p", cypherLang));
         }
     }
 }

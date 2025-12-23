@@ -14,7 +14,7 @@
         "startedAtTime": "2025-01-25T11:30:00Z",
         "endedAtTime": "2025-01-25T11:30:14Z",
         "atLocation": "42.359780, -71.092070",
-        "wasAssociatedWith": [ "Software Agent" ],
+        "wasAssociatedWith": [ "Person Agent" ],
         "wasInformedBy": [ "Activity 1" ],
         "used": [ "Entity 1" ]
     }]
