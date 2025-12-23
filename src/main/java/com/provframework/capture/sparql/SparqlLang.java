@@ -120,6 +120,16 @@ public class SparqlLang {
             );
         }
 
+        if (activity.getAtLocation() != null) {
+            statement.insertData(
+                GraphPatterns.tp(
+                    Values.iri(aBoxNamespace, activityIri),
+                    PROV.AT_LOCATION,
+                    Values.literal(activity.getAtLocation())
+                )
+            );
+        }
+
         getNonNullStream(activity.getUsed())
         .forEach(used -> {
             insertInstance(statement, used, PROV.ENTITY);

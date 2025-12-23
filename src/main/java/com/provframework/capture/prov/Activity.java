@@ -7,6 +7,7 @@ public class Activity {
     private String id; 
     private String startedAtTime;
     private String endedAtTime;
+    private String atLocation;
     private List<String> wasInformedBy;
     private List<String> used;
     private List<String> wasAssociatedWith;
@@ -34,6 +35,14 @@ public class Activity {
 
     public String getEndedAtTime() {
         return endedAtTime;
+    }
+
+    public String getAtLocation() {
+        return atLocation;
+    }
+
+    public void setAtLocation(String atLocation) {
+        this.atLocation = atLocation;
     }
 
     public List<String> getWasInformedBy() {

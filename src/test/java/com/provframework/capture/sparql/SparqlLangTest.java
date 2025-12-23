@@ -137,6 +137,12 @@ class SparqlLangTest {
 
         assertTrue(model.contains(
             Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()),
+            PROV.AT_LOCATION,
+            Values.literal("42.359780, -71.092070")
+        )); 
+
+        assertTrue(model.contains(
+            Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Activity 2").toString()),
             PROV.USED,
             Values.iri(SparqlLang.aBoxNamespace, ParsedIRI.create("Entity 1").toString())
         )); 
