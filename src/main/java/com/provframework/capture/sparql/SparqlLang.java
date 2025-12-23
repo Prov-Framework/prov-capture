@@ -1,6 +1,7 @@
 package com.provframework.capture.sparql;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import org.eclipse.rdf4j.common.net.ParsedIRI;
 import org.eclipse.rdf4j.model.IRI;
@@ -64,129 +65,61 @@ public class SparqlLang {
     private void insertEntity(InsertDataQuery statement, Entity entity) {
         String entityIri = insertInstance(statement, entity.getId(), PROV.ENTITY).toString();
 
-        StreamUtils.getNonNullStream(entity.getWasDerivedFrom())
-        .forEach(derivedFrom -> {
-            insertInstance(statement, derivedFrom, PROV.ENTITY);
-            statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, entityIri),
-                PROV.WAS_DERIVED_FROM,
-                Values.iri(aBoxNamespace, ParsedIRI.create(derivedFrom).toString())    
-            ));
-        });
-
-        StreamUtils.getNonNullStream(entity.getWasGeneratedBy())
-        .forEach(generatedBy -> {
-            insertInstance(statement, generatedBy, PROV.ACTIVITY);
-            statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, entityIri),
-                PROV.WAS_GENERATED_BY,
-                Values.iri(aBoxNamespace, ParsedIRI.create(generatedBy).toString())    
-            ));
-        });
-
-        StreamUtils.getNonNullStream(entity.getWasAttributedTo())
-        .forEach(attributedTo -> {
-            insertInstance(statement, attributedTo, PROV.AGENT);
-            statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, entityIri),
-                PROV.WAS_ATTRIBUTED_TO,
-                Values.iri(aBoxNamespace, ParsedIRI.create(attributedTo).toString())    
-            ));
-        });
+        addRelatedNodes(statement, entityIri, PROV.WAS_DERIVED_FROM, PROV.ENTITY, entity.getWasDerivedFrom());
+        addRelatedNodes(statement, entityIri, PROV.WAS_GENERATED_BY, PROV.ACTIVITY, entity.getWasGeneratedBy());
+        addRelatedNodes(statement, entityIri, PROV.WAS_ATTRIBUTED_TO, PROV.AGENT, entity.getWasAttributedTo());
     }
 
     private void insertActivity(InsertDataQuery statement, Activity activity) {
         String activityIri = insertInstance(statement, activity.getId(), PROV.ACTIVITY).toString();
 
         if (activity.getStartedAtTime() != null) {
-            statement.insertData(
-                GraphPatterns.tp(
+            statement.insertData(GraphPatterns.tp(
                     Values.iri(aBoxNamespace, activityIri),
                     PROV.STARTED_AT_TIME,
                     Values.literal(OffsetDateTime.parse(activity.getStartedAtTime()))    
-                )
-            );
+            ));
         }
 
         if (activity.getEndedAtTime() != null) {
-            statement.insertData(
-                GraphPatterns.tp(
+            statement.insertData(GraphPatterns.tp(
                     Values.iri(aBoxNamespace, activityIri),
                     PROV.ENDED_AT_TIME,
                     Values.literal(OffsetDateTime.parse(activity.getEndedAtTime()))
-                )
-            );
+            ));
         }
 
         if (activity.getAtLocation() != null) {
-            statement.insertData(
-                GraphPatterns.tp(
+            statement.insertData(GraphPatterns.tp(
                     Values.iri(aBoxNamespace, activityIri),
                     PROV.AT_LOCATION,
                     Values.literal(activity.getAtLocation())
-                )
-            );
+            ));
         }
 
-        StreamUtils.getNonNullStream(activity.getUsed())
-        .forEach(used -> {
-            insertInstance(statement, used, PROV.ENTITY);
-            statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, activityIri),
-                PROV.USED,
-                Values.iri(aBoxNamespace, ParsedIRI.create(used).toString())    
-            ));
-        });
-
-        StreamUtils.getNonNullStream(activity.getWasAssociatedWith())
-        .forEach(wasAssociatedWith -> {
-            insertInstance(statement, wasAssociatedWith, PROV.AGENT);
-            statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, activityIri),
-                PROV.WAS_ASSOCIATED_WITH,
-                Values.iri(aBoxNamespace, ParsedIRI.create(wasAssociatedWith).toString())    
-            ));
-        });
-
-        StreamUtils.getNonNullStream(activity.getWasInformedBy())
-        .forEach(wasInformedBy -> {
-            insertInstance(statement, wasInformedBy, PROV.ACTIVITY);
-            statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, activityIri),
-                PROV.WAS_INFORMED_BY,
-                Values.iri(aBoxNamespace, ParsedIRI.create(wasInformedBy).toString())    
-            ));
-        });
+        addRelatedNodes(statement, activityIri, PROV.USED, PROV.ENTITY, activity.getUsed());
+        addRelatedNodes(statement, activityIri, PROV.WAS_ASSOCIATED_WITH, PROV.AGENT, activity.getWasAssociatedWith());
+        addRelatedNodes(statement, activityIri, PROV.WAS_INFORMED_BY, PROV.ACTIVITY, activity.getWasInformedBy());
     }
 
     private void insertAgent(InsertDataQuery statement, Agent agent) {
         String agentIri = insertInstance(statement, agent.getId(), PROV.AGENT).toString();
+        addRelatedNodes(statement, agentIri, PROV.ACTED_ON_BEHALF_OF, PROV.AGENT, agent.getActedOnBehalfOf());
+    }
 
-        StreamUtils.getNonNullStream(agent.getActedOnBehalfOf())
-        .forEach(actedOnBehalfOf -> {
-            insertInstance(statement, actedOnBehalfOf, PROV.AGENT);
+    private void addRelatedNodes(InsertDataQuery statement, String primaryNodeIri, IRI edgeLabel, 
+        IRI nodeType, List<String> relatedNodeLabels) {
+        StreamUtils.getNonNullStream(relatedNodeLabels)
+        .forEach(relatedNode -> {
+            insertInstance(statement, relatedNode, nodeType);
             statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, agentIri),
-                PROV.ACTED_ON_BEHALF_OF,
-                Values.iri(aBoxNamespace, ParsedIRI.create(actedOnBehalfOf).toString())    
+                Values.iri(aBoxNamespace, primaryNodeIri),
+                edgeLabel,
+                Values.iri(aBoxNamespace, ParsedIRI.create(relatedNode).toString())    
             ));
         });
     }
 
-    /**
-     * Handles encoding and inserting client supplied IDs as the URI as well as the 
-     * original ID as a label. This small detail is important. A sequence number or
-     * a UUID could have been used as a URI, but that could create a entity coreference
-     * resolution problem later. If two separate bundles each reference the same agent 
-     * using an internal employee number, the desired bahavior is that the relationships
-     * from both bundles are added to the same instance. Put another way, there should be
-     * one node in the graph, with many edges added to it. If two nodes are added, a need
-     * will arise to merge the nodes, which is harder to do after the fact.
-     * @param statement
-     * @param id
-     * @param type
-     * @return
-     */
     private ParsedIRI insertInstance(InsertDataQuery statement, String id, IRI type) {
         ParsedIRI parsedIri = ParsedIRI.create(id);
 
