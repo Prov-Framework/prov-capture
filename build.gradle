@@ -38,7 +38,7 @@ dependencies {
 	implementation 'org.eclipse.rdf4j:rdf4j-sail-memory:5.2.0'
 
 	// Gremlin
-	implementation 'org.apache.tinkerpop:gremlin-driver:3.8.0'
+	implementation 'org.apache.tinkerpop:gremlin-driver:3.7.5'
 	// JanusGraph
 	implementation 'org.janusgraph:janusgraph-driver:1.2.0-20251114-142114.b424a8f'
 
