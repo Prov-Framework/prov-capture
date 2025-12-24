@@ -44,7 +44,7 @@ public class Main {
 		logger.debug("Received bundle: {}", bundle);
 
 		// cypherDriver.insertBundle(bundle);
-		sparqlDriver.insertBundle(bundle);
-		// gremlinDriver.insertBundle(bundle);
+		// sparqlDriver.insertBundle(bundle);
+		gremlinDriver.insertBundle(bundle);
 	}
 }

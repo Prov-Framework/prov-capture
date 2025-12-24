@@ -22,11 +22,14 @@ public class GremlinDriver {
     @SuppressWarnings("unused")
     private final Integer port;
     private GraphTraversalSource g;
+    private GremlinLang gremlinLang;
 
     public GremlinDriver(@Value("${gremlin.uri}") String uri,
-                @Value("${gremlin.port}") Integer port) {
+                @Value("${gremlin.port}") Integer port,
+                GremlinLang gremlinLang) {
         this.uri = uri;
         this.port = port;
+        this.gremlinLang = gremlinLang;
         
         try {
             MessageSerializer<?> serializer = Serializers.GRAPHBINARY_V1.simpleInstance(); 
@@ -46,6 +49,13 @@ public class GremlinDriver {
     }
 
     public void insertBundle(Bundle bundle) {
-        GremlinLang.getInsertStatement(bundle, g).next();
+        try {
+            this.g = gremlinLang.getInsertStatement(bundle, g);
+            this.g.tx().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.g.tx().close();
+        }
     }
 }
