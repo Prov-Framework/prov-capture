@@ -42,7 +42,7 @@ public class GremlinDriver {
             .port(port)
             .serializer(serializer)
             .create(); 
-            this.g = traversal().with(DriverRemoteConnection.using(cluster));
+            this.g = traversal().withRemote(DriverRemoteConnection.using(cluster));
         } catch (Exception e) {
             e.printStackTrace();
         }
