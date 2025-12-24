@@ -21,7 +21,9 @@ repositories {
 }
 
 dependencies {
+	//Spring Boot
 	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// Kafka
 	implementation 'org.springframework.kafka:spring-kafka'
@@ -39,10 +41,10 @@ dependencies {
 
 	// Gremlin
 	implementation 'org.apache.tinkerpop:gremlin-driver:3.7.5'
+	implementation 'org.apache.tinkerpop:tinkergraph-gremlin:3.7.5'
+
 	// JanusGraph
 	implementation 'org.janusgraph:janusgraph-driver:1.2.0-20251114-142114.b424a8f'
-
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
