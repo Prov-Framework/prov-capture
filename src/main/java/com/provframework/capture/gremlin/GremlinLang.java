@@ -1,5 +1,6 @@
 package com.provframework.capture.gremlin;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,14 +41,21 @@ public class GremlinLang {
     }
 
     private void insertActivity(GraphTraversalSource g, Activity activity) {
+        Map<Object, Object> optionalProperties = new HashMap<>();
+        if(activity.getStartedAtTime() != null) {
+            optionalProperties.put(PROV.STARTED_AT_TIME.getLocalName(), activity.getStartedAtTime());
+        }
+        if(activity.getEndedAtTime() != null) {
+            optionalProperties.put(PROV.ENDED_AT_TIME.getLocalName(), activity.getEndedAtTime());
+        }
+        if(activity.getAtLocation() != null) {
+            optionalProperties.put(PROV.AT_LOCATION.getLocalName(), activity.getAtLocation());
+        }
+
         Vertex activityVertex = g.mergeV(Map.of( // Match on label and name
             T.label, PROV.ACTIVITY.getLocalName(),
             "name", activity.getId()
-        )).option(Merge.onMatch, Map.of( // On match, merge these properties
-            PROV.STARTED_AT_TIME.getLocalName(), activity.getStartedAtTime(),
-            PROV.ENDED_AT_TIME.getLocalName(), activity.getEndedAtTime(),
-            PROV.AT_LOCATION.getLocalName(), activity.getAtLocation()
-        )).next();
+        )).option(Merge.onMatch, optionalProperties).next();
 
         addRelatedVerticies(g, activityVertex, PROV.WAS_ASSOCIATED_WITH, PROV.AGENT, activity.getWasAssociatedWith());
         addRelatedVerticies(g, activityVertex, PROV.USED, PROV.ENTITY, activity.getUsed());
