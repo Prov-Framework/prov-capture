@@ -1,7 +1,5 @@
 package com.provframework.capture.gremlin;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Spliterator;
@@ -12,17 +10,15 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.junit.jupiter.api.Test;
 
 import com.provframework.capture.kafka.BundleDeserializer;
 import com.provframework.capture.prov.Bundle;
 
-class GremlinLangTest {
-    @Test
-    void testBundleToGremlin() throws IOException {
+public class GremlinLangTest {
+    public String test(String testBundle) throws IOException {
         Bundle bundle = new Bundle();
         GremlinLang gremlinLang = new GremlinLang();
-        String message = new String(getClass().getResourceAsStream("/bundle.json").readAllBytes());
+        String message = new String(getClass().getResourceAsStream("/" + testBundle).readAllBytes());
         try(BundleDeserializer deser = new BundleDeserializer()) {
             bundle = deser.deserialize("prov", message.getBytes());
         }
@@ -70,43 +66,8 @@ class GremlinLangTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        // TODO: Add assertions comparing vertices and edges to expected values
-        // Example:
-        // assertTrue(vertices.size() > 0);
-        // assertTrue(edges.stream().anyMatch(e -> e.label().equals("wasGeneratedBy")));
 
-        assertEquals(output.toString(), """
-                === Vertices ===
-                Vertex[label=Entity]
-                  name=Entity 2
-                Vertex[label=Activity]
-                  name=Activity 1
-                Vertex[label=Entity]
-                  name=Entity 1
-                Vertex[label=Agent]
-                  name=Organization Agent
-                Vertex[label=Agent]
-                  name=Person Agent
-                Vertex[label=Activity]
-                  atLocation=42.359780, -71.092070
-                  endedAtTime=2025-01-25T11:30:14Z
-                  name=Activity 2
-                  startedAtTime=2025-01-25T11:30:00Z
-                  
-                === Edges ===
-                Edge[label=wasInformedBy, from=Activity 2, to=Activity 1]
-                Edge[label=wasDerivedFrom, from=Entity 2, to=Entity 1]
-                Edge[label=actedOnBehalfOf, from=Person Agent, to=Organization Agent]
-                Edge[label=wasAttributedTo, from=Entity 2, to=Person Agent]
-                Edge[label=wasGeneratedBy, from=Entity 2, to=Activity 2]
-                Edge[label=wasAssociatedWith, from=Activity 2, to=Person Agent]
-                Edge[label=used, from=Activity 2, to=Entity 1]
-
-                === Summary ===
-                Total Vertices: 6
-                Total Edges: 7"""
-            );
+        return output.toString();
     }
     
     private Graph openTinkerGraph() {
