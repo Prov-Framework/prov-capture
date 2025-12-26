@@ -16,7 +16,7 @@ class IntegrationTest {
 
 	@Test
 	void listen() throws IOException {
-		String bundle = new String(getClass().getResourceAsStream("/bundle4.json").readAllBytes());
+		String bundle = new String(getClass().getResourceAsStream("/bundle1.json").readAllBytes());
 		kafkaTemplate.send("prov", bundle);
 		assertTrue(true); // To make sonarqube happy
 	}

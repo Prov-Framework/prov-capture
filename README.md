@@ -18,7 +18,7 @@ It is not meant to be run as-is. The intent is that you clone or fork and modify
  - Container/Image packaging. Each organization has different security requirements and devs should modify thier fork before creating a production image.
 
 ### TODO for 0.1.0 Release
-- [ ] Null testing with more bundles and corresponding test cases for all graph types
+- [x] Null testing with more bundles and corresponding test cases for all graph types
 - [ ] Fix 100% of sonar findings
 
 ### TODO for 0.2.0 Release
