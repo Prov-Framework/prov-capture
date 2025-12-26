@@ -7,7 +7,9 @@ import com.provframework.capture.prov.Bundle;
 import com.provframework.capture.prov.Entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.vocabulary.PROV;
@@ -24,66 +26,87 @@ import org.springframework.stereotype.Component;
 public class CypherLang {
 
     public Statement getInsertStatement(Bundle bundle) {
-        List<PatternElement> elements = new ArrayList<>();
+        List<PatternElement> nodes = new ArrayList<>();
+        List<PatternElement> relationships = new ArrayList<>();
 
-        StreamUtils.getNonNullStream(bundle.getEntities()).forEach(entity -> insertEntity(elements, entity));
-        StreamUtils.getNonNullStream(bundle.getActivities()).forEach(activity -> insertActivity(elements, activity));
-        StreamUtils.getNonNullStream(bundle.getAgents()).forEach(agent -> insertAgent(elements, agent));
+        StreamUtils.getNonNullStream(bundle.getEntities()).forEach(entity -> insertEntity(nodes, relationships, entity));
+        StreamUtils.getNonNullStream(bundle.getActivities()).forEach(activity -> insertActivity(nodes, relationships, activity));
+        StreamUtils.getNonNullStream(bundle.getAgents()).forEach(agent -> insertAgent(nodes, relationships, agent));
 
-        OngoingMerge statement = Cypher.merge(elements.get(0));
+        OngoingMerge statement = Cypher.merge(nodes.get(0));
 
-        elements.stream().skip(1).forEach(element -> {
-            statement.merge(element);
+        // Nodes must be merged before relationships or else node properties will be lost
+        nodes.stream().skip(1).forEach(n -> {
+            statement.merge(n);
+        });
+
+        relationships.stream().forEach(r -> {
+            statement.merge(r);
         });
 
         return statement.build();
     }
 
-    private void insertEntity(List<PatternElement> elements, Entity entity) {
-        Node entityNode = createNode(entity.getId(), PROV.ENTITY);
+    private void insertEntity(List<PatternElement> nodes, List<PatternElement> relationships, Entity entity) {
+        Node entityNode = createNode(entity.getId(), PROV.ENTITY, null);
+        nodes.add(entityNode);
 
-        addRelatedNodes(elements, entityNode, PROV.WAS_DERIVED_FROM, PROV.ENTITY, entity.getWasDerivedFrom());
-        addRelatedNodes(elements, entityNode, PROV.WAS_ATTRIBUTED_TO, PROV.AGENT, entity.getWasAttributedTo());
-        addRelatedNodes(elements, entityNode, PROV.WAS_GENERATED_BY, PROV.ACTIVITY, entity.getWasGeneratedBy());
+        addRelatedNodes(nodes, relationships, entityNode, PROV.WAS_DERIVED_FROM, PROV.ENTITY, entity.getWasDerivedFrom());
+        addRelatedNodes(nodes, relationships, entityNode, PROV.WAS_ATTRIBUTED_TO, PROV.AGENT, entity.getWasAttributedTo());
+        addRelatedNodes(nodes, relationships, entityNode, PROV.WAS_GENERATED_BY, PROV.ACTIVITY, entity.getWasGeneratedBy());
     }
 
-    private void insertActivity(List<PatternElement> elements, Activity activity) {
-        Node activityNode = createNode(activity.getId(), PROV.ACTIVITY);
+    private void insertActivity(List<PatternElement> nodes, List<PatternElement> relationships, Activity activity) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(RDFS.LABEL.getLocalName(), Cypher.literalOf(activity.getId()));
 
-        // Need to override properties for activity
-        activityNode.withProperties(
-            RDFS.LABEL.getLocalName(), Cypher.literalOf(activity.getId()),
-            PROV.STARTED_AT_TIME.getLocalName(), Cypher.literalOf(activity.getStartedAtTime().toString()),
-            PROV.ENDED_AT_TIME.getLocalName(), Cypher.literalOf(activity.getEndedAtTime().toString()),
-            PROV.AT_LOCATION.getLocalName(), Cypher.literalOf(activity.getAtLocation())
-        );
+        // Optional Properties
+        if(activity.getStartedAtTime() != null) {
+            properties.put(PROV.STARTED_AT_TIME.getLocalName(), Cypher.literalOf(activity.getStartedAtTime()));
+        }
+        if(activity.getEndedAtTime() != null) {
+            properties.put(PROV.ENDED_AT_TIME.getLocalName(), Cypher.literalOf(activity.getEndedAtTime()));
+        }
+        if(activity.getAtLocation() != null) {
+            properties.put(PROV.AT_LOCATION.getLocalName(), Cypher.literalOf(activity.getAtLocation()));
+        }
 
-        addRelatedNodes(elements, activityNode, PROV.WAS_ASSOCIATED_WITH, PROV.AGENT, activity.getWasAssociatedWith());
-        addRelatedNodes(elements, activityNode, PROV.USED, PROV.ENTITY, activity.getUsed());
-        addRelatedNodes(elements, activityNode, PROV.WAS_INFORMED_BY, PROV.ACTIVITY, activity.getWasInformedBy());
+        Node activityNode = createNode(activity.getId(), PROV.ACTIVITY, properties);
+        nodes.add(activityNode);
+
+        addRelatedNodes(nodes, relationships, activityNode, PROV.WAS_ASSOCIATED_WITH, PROV.AGENT, activity.getWasAssociatedWith());
+        addRelatedNodes(nodes, relationships, activityNode, PROV.USED, PROV.ENTITY, activity.getUsed());
+        addRelatedNodes(nodes, relationships, activityNode, PROV.WAS_INFORMED_BY, PROV.ACTIVITY, activity.getWasInformedBy());
     }
 
-    private void insertAgent(List<PatternElement> elements, Agent agent) {
-        Node agentNode = createNode(agent.getId(), PROV.AGENT);
+    private void insertAgent(List<PatternElement> nodes, List<PatternElement> relationships, Agent agent) {
+        Node agentNode = createNode(agent.getId(), PROV.AGENT, null);
+        nodes.add(agentNode);
 
-        addRelatedNodes(elements, agentNode, PROV.ACTED_ON_BEHALF_OF, PROV.AGENT, agent.getActedOnBehalfOf());
+        addRelatedNodes(nodes, relationships, agentNode, PROV.ACTED_ON_BEHALF_OF, PROV.AGENT, agent.getActedOnBehalfOf());
     }
 
-    private void addRelatedNodes(List<PatternElement> elements, Node primaryNode, IRI edgeLabel, IRI nodeType, 
-        List<String> relatedNodeLabels) {
+    private void addRelatedNodes(List<PatternElement> nodes, List<PatternElement> relationships, 
+        Node primaryNode, IRI edgeLabel, IRI nodeType, List<String> relatedNodeLabels) {
         StreamUtils.getNonNullStream(relatedNodeLabels)
         .forEach(relatedNode -> {
-            Node secondaryNode = createNode(relatedNode, nodeType);
+            Node secondaryNode = createNode(relatedNode, nodeType, null);
             Relationship relationship = primaryNode.relationshipTo(secondaryNode, edgeLabel.getLocalName());
-            elements.add(relationship);
+            relationships.add(relationship);
         });
     }
 
-    private Node createNode(String id, IRI type) {
-        return Cypher.node(type.getLocalName())
-            .named(id)
-            .withProperties(
+    private Node createNode(String id, IRI type, Map<String, Object> properties) {
+        Node node = Cypher.node(type.getLocalName()).named(id);
+
+        if (properties != null) {
+            node = node.withProperties(properties);
+        } else {
+            node = node.withProperties(
                 RDFS.LABEL.getLocalName(), Cypher.literalOf(id)
             );
+        }
+
+        return node;
     }
 }
