@@ -36,13 +36,8 @@ public class CypherLang {
         OngoingMerge statement = Cypher.merge(nodes.get(0));
 
         // Nodes must be merged before relationships or else node properties will be lost
-        nodes.stream().skip(1).forEach(n -> {
-            statement.merge(n);
-        });
-
-        relationships.stream().forEach(r -> {
-            statement.merge(r);
-        });
+        nodes.stream().skip(1).forEach(statement::merge);
+        relationships.stream().forEach(statement::merge);
 
         return statement.build();
     }
@@ -51,9 +46,9 @@ public class CypherLang {
         Node entityNode = createNode(entity.getId(), PROV.ENTITY, null);
         nodes.add(entityNode);
 
-        addRelatedNodes(nodes, relationships, entityNode, PROV.WAS_DERIVED_FROM, PROV.ENTITY, entity.getWasDerivedFrom());
-        addRelatedNodes(nodes, relationships, entityNode, PROV.WAS_ATTRIBUTED_TO, PROV.AGENT, entity.getWasAttributedTo());
-        addRelatedNodes(nodes, relationships, entityNode, PROV.WAS_GENERATED_BY, PROV.ACTIVITY, entity.getWasGeneratedBy());
+        addRelationships(relationships, entityNode, PROV.WAS_DERIVED_FROM, PROV.ENTITY, entity.getWasDerivedFrom());
+        addRelationships(relationships, entityNode, PROV.WAS_ATTRIBUTED_TO, PROV.AGENT, entity.getWasAttributedTo());
+        addRelationships(relationships, entityNode, PROV.WAS_GENERATED_BY, PROV.ACTIVITY, entity.getWasGeneratedBy());
     }
 
     private void insertActivity(List<PatternElement> nodes, List<PatternElement> relationships, Activity activity) {
@@ -74,20 +69,20 @@ public class CypherLang {
         Node activityNode = createNode(activity.getId(), PROV.ACTIVITY, properties);
         nodes.add(activityNode);
 
-        addRelatedNodes(nodes, relationships, activityNode, PROV.WAS_ASSOCIATED_WITH, PROV.AGENT, activity.getWasAssociatedWith());
-        addRelatedNodes(nodes, relationships, activityNode, PROV.USED, PROV.ENTITY, activity.getUsed());
-        addRelatedNodes(nodes, relationships, activityNode, PROV.WAS_INFORMED_BY, PROV.ACTIVITY, activity.getWasInformedBy());
+        addRelationships(relationships, activityNode, PROV.WAS_ASSOCIATED_WITH, PROV.AGENT, activity.getWasAssociatedWith());
+        addRelationships(relationships, activityNode, PROV.USED, PROV.ENTITY, activity.getUsed());
+        addRelationships(relationships, activityNode, PROV.WAS_INFORMED_BY, PROV.ACTIVITY, activity.getWasInformedBy());
     }
 
     private void insertAgent(List<PatternElement> nodes, List<PatternElement> relationships, Agent agent) {
         Node agentNode = createNode(agent.getId(), PROV.AGENT, null);
         nodes.add(agentNode);
 
-        addRelatedNodes(nodes, relationships, agentNode, PROV.ACTED_ON_BEHALF_OF, PROV.AGENT, agent.getActedOnBehalfOf());
+        addRelationships(relationships, agentNode, PROV.ACTED_ON_BEHALF_OF, PROV.AGENT, agent.getActedOnBehalfOf());
     }
 
-    private void addRelatedNodes(List<PatternElement> nodes, List<PatternElement> relationships, 
-        Node primaryNode, IRI edgeLabel, IRI nodeType, List<String> relatedNodeLabels) {
+    private void addRelationships(List<PatternElement> relationships, Node primaryNode,
+        IRI edgeLabel, IRI nodeType, List<String> relatedNodeLabels) {
         StreamUtils.getNonNullStream(relatedNodeLabels)
         .forEach(relatedNode -> {
             Node secondaryNode = createNode(relatedNode, nodeType, null);

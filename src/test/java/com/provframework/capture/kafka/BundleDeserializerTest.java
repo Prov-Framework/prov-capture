@@ -22,7 +22,7 @@ class BundleDeserializerTest {
 	@Test
 	void deserializeValidJsonReturnsBundle() throws IOException {
 		try(BundleDeserializer deser = new BundleDeserializer()) {
-			String json = new String(getClass().getResourceAsStream("/bundle.json").readAllBytes());
+			String json = new String(getClass().getResourceAsStream("/bundle1.json").readAllBytes());
 			Bundle b = deser.deserialize("prov", json.getBytes());
 			assertEquals("Entity 2", b.getEntities().get(0).getId());
 		}

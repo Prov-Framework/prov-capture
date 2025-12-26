@@ -14,6 +14,7 @@ import org.eclipse.rdf4j.sparqlbuilder.core.Prefix;
 import org.eclipse.rdf4j.sparqlbuilder.core.SparqlBuilder;
 import org.eclipse.rdf4j.sparqlbuilder.core.query.InsertDataQuery;
 import org.eclipse.rdf4j.sparqlbuilder.graphpattern.GraphPatterns;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.provframework.capture.StreamUtils;
@@ -37,10 +38,25 @@ public class SparqlLang {
     private static IRI xsdIRI = Values.iri(XSD.NAMESPACE);
     private static Prefix xsdPrefix = SparqlBuilder.prefix(XSD.PREFIX, xsdIRI);
 
-    public static String aBoxNamespace = "http://example.org/abox#";
-    private static IRI aBoxIRI = Values.iri(aBoxNamespace);
-    private static String aBox = "abox"; // Assertion Box (as apposed to Terminological Box)
-    private static Prefix aBoxPrefix = SparqlBuilder.prefix(aBox, aBoxIRI);
+    private String myNamespace;
+    private IRI myIRI;
+    private Prefix myPrefix;
+
+    @Autowired
+    public SparqlLang() {
+        
+    }
+
+    public SparqlLang(String myNamespace, String myPrefixString) {
+        this.myNamespace = myNamespace;
+        this.myPrefix = SparqlBuilder.prefix(myPrefixString, myIRI);
+    }
+
+    public void setMyNamespace(String myNamespace, String myPrefixString) {
+        this.myNamespace = myNamespace;
+        this.myIRI = Values.iri(myNamespace);
+        this.myPrefix = SparqlBuilder.prefix(myPrefixString, myIRI);
+    }
 
     public InsertDataQuery getInsertStatement(Bundle bundle) {
         InsertDataQuery statement = new InsertDataQuery();
@@ -56,7 +72,7 @@ public class SparqlLang {
 
     private void insertPrefixes(InsertDataQuery statement) {
         statement.prefix(provPrefix);
-        statement.prefix(aBoxPrefix);
+        statement.prefix(myPrefix);
         statement.prefix(rdfPrefix);
         statement.prefix(rdfsPrefix);
         statement.prefix(xsdPrefix);
@@ -75,7 +91,7 @@ public class SparqlLang {
 
         if (activity.getStartedAtTime() != null) {
             statement.insertData(GraphPatterns.tp(
-                    Values.iri(aBoxNamespace, activityIri),
+                    Values.iri(myNamespace, activityIri),
                     PROV.STARTED_AT_TIME,
                     Values.literal(OffsetDateTime.parse(activity.getStartedAtTime()))    
             ));
@@ -83,7 +99,7 @@ public class SparqlLang {
 
         if (activity.getEndedAtTime() != null) {
             statement.insertData(GraphPatterns.tp(
-                    Values.iri(aBoxNamespace, activityIri),
+                    Values.iri(myNamespace, activityIri),
                     PROV.ENDED_AT_TIME,
                     Values.literal(OffsetDateTime.parse(activity.getEndedAtTime()))
             ));
@@ -91,7 +107,7 @@ public class SparqlLang {
 
         if (activity.getAtLocation() != null) {
             statement.insertData(GraphPatterns.tp(
-                    Values.iri(aBoxNamespace, activityIri),
+                    Values.iri(myNamespace, activityIri),
                     PROV.AT_LOCATION,
                     Values.literal(activity.getAtLocation())
             ));
@@ -113,9 +129,9 @@ public class SparqlLang {
         .forEach(relatedNode -> {
             insertInstance(statement, relatedNode, nodeType);
             statement.insertData(GraphPatterns.tp(
-                Values.iri(aBoxNamespace, primaryNodeIri),
+                Values.iri(myNamespace, primaryNodeIri),
                 edgeLabel,
-                Values.iri(aBoxNamespace, ParsedIRI.create(relatedNode).toString())    
+                Values.iri(myNamespace, ParsedIRI.create(relatedNode).toString())    
             ));
         });
     }
@@ -125,12 +141,12 @@ public class SparqlLang {
 
         statement.insertData(
             GraphPatterns.tp(
-                Values.iri(aBoxNamespace, parsedIri.toString()),
+                Values.iri(myNamespace, parsedIri.toString()),
                 RDF.TYPE,
                 type    
             ),
             GraphPatterns.tp(
-                Values.iri(aBoxNamespace, parsedIri.toString()),
+                Values.iri(myNamespace, parsedIri.toString()),
                 RDFS.LABEL,
                 Values.literal(id)
             )

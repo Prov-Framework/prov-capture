@@ -10,6 +10,8 @@ import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.util.MessageSerializer;
 import org.apache.tinkerpop.gremlin.util.ser.Serializers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import com.provframework.capture.prov.Bundle;
 
 @Service
 public class GremlinDriver {
+    private Logger logger = LoggerFactory.getLogger(GremlinDriver.class);
+
     @SuppressWarnings("unused")
     private final String uri;
     @SuppressWarnings("unused")
@@ -44,7 +48,7 @@ public class GremlinDriver {
             .create(); 
             this.g = traversal().withRemote(DriverRemoteConnection.using(cluster));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error initializing Gremlin driver: {}", e.getMessage());
         }
     }
 
@@ -53,7 +57,7 @@ public class GremlinDriver {
             this.g = gremlinLang.getInsertStatement(bundle, g);
             this.g.tx().commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error inserting bundle in Gremlin: {}", e.getMessage());
         } finally {
             this.g.tx().close();
         }
