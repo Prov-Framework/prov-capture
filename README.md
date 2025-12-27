@@ -19,7 +19,7 @@ It is not meant to be run as-is. The intent is that you clone or fork and modify
 
 ### TODO for 0.1.0 Release
 - [x] Null testing with more bundles and corresponding test cases for all graph types
-- [ ] Fix 100% of sonar findings
+- [x] Fix 100% of sonar findings
 
 ### TODO for 0.2.0 Release
 - [ ] Achieve 100% unit test code coverage

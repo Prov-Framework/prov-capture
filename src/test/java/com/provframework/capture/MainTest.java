@@ -31,7 +31,7 @@ class MainTest {
 	}
 
 	@Test
-	void listenGeneratesStatementAndExecutesQuery() throws Exception {
+	void listenGeneratesStatementAndExecutesQuery() {
 		// mock Bolt and driver
 		CypherDriver mockBolt = mock(CypherDriver.class);
 		SparqlDriver mockRdf4j = mock(SparqlDriver.class);
@@ -56,7 +56,7 @@ class MainTest {
 		);
 
 		// create a driver proxy that handles executableQuery(...) by returning our execImpl
-		Object driverProxy = java.lang.reflect.Proxy.newProxyInstance(
+		java.lang.reflect.Proxy.newProxyInstance(
 			Driver.class.getClassLoader(),
 			new Class<?>[] { Driver.class },
 			(proxy, method, args) -> {

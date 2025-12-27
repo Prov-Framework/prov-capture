@@ -9,12 +9,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.provframework.capture.cypher.CypherDriver;
-import com.provframework.capture.cypher.CypherLang;
-import com.provframework.capture.gremlin.GremlinLang;
 import com.provframework.capture.gremlin.GremlinDriver;
 import com.provframework.capture.prov.Bundle;
 import com.provframework.capture.sparql.SparqlDriver;
-import com.provframework.capture.sparql.SparqlLang;
 
 @SpringBootApplication
 @EnableKafka
@@ -43,8 +40,9 @@ public class Main {
 	public void listen(Bundle bundle) {
 		logger.debug("Received bundle: {}", bundle);
 
-		// cypherDriver.insertBundle(bundle);
+		// Remove the ones you don't need.
+		cypherDriver.insertBundle(bundle);
 		sparqlDriver.insertBundle(bundle);
-		// gremlinDriver.insertBundle(bundle);
+		gremlinDriver.insertBundle(bundle);
 	}
 }

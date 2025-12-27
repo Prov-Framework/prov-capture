@@ -17,7 +17,7 @@ import org.apache.tinkerpop.gremlin.structure.Graph;
 import com.provframework.capture.kafka.BundleDeserializer;
 import com.provframework.capture.prov.Bundle;
 
-public class GremlinLangTest {
+class GremlinLangTest {
     public String test(String testBundle) throws IOException {
         Bundle bundle = new Bundle();
         GremlinLang gremlinLang = new GremlinLang();

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.provframework.capture.kafka.BundleDeserializer;
 import com.provframework.capture.prov.Bundle;
 
-public class SparqlLangTest {
+class SparqlLangTest {
     public String test(String testBundle) throws IOException {
         Bundle bundle = new Bundle();
         SparqlLang sparqlLang = new SparqlLang();
