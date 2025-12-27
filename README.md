@@ -24,6 +24,8 @@ It is not meant to be run as-is. The intent is that you clone or fork and modify
 ### TODO for 0.2.0 Release  
 - [x] Achieve 100% unit test code coverage
 
+(ALL RELEASES FROM HERE FORWARD MUST HAVE 100% COVERAGE AND 0 SONAR FINDINGS)
+
 ### TODO for 0.3.0 Release
 - [ ] Performance testing and document results for Neptune: Cypher (AWS Deployment)
 - [ ] Performance testing and document results for Neptune: Gremlin (AWS Deployment)
@@ -36,12 +38,9 @@ It is not meant to be run as-is. The intent is that you clone or fork and modify
 
 ### TODO for 0.4.0 Release
 - [ ] Implement batched upserts
-- [ ] Re-run performance tests and document
 
 ### TODO for 1.0.0 Release
-- [ ] Re-test and document with performance improvements
-- [ ] Fix 100% sonar issues for performance improvements
-- [ ] Update unit tests to get back to 100% test coverage
+- [ ] Ensure graceful failure of kafka and DB connection issues with auto-reconnect behavior 
 
 ### TODO for 1.1.0 Release
 - [ ] Add full PROV-O terminology support
