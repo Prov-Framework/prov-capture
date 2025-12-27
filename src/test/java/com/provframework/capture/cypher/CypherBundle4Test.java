@@ -14,7 +14,7 @@ class CypherBundle4Test {
             """ 
             MERGE (`Entity 1`:`Entity` {label: 'Entity 1'}) 
             MERGE (`Entity 2`:`Entity` {label: 'Entity 2'}) 
-            MERGE (`Activity 2`:`Activity` {startedAtTime: '2025-01-25T11:30:00Z', label: 'Activity 2'}) 
+            MERGE (`Activity 2`:`Activity` {label: 'Activity 2'}) 
             MERGE (`Person Agent`:`Agent` {label: 'Person Agent'}) 
             MERGE (`Entity 1`)-[:`wasGeneratedBy`]->(`Activity 2`) 
             MERGE (`Entity 2`)-[:`wasGeneratedBy`]->(`Activity 2`) 

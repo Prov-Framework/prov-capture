@@ -14,7 +14,6 @@ import org.eclipse.rdf4j.sparqlbuilder.core.Prefix;
 import org.eclipse.rdf4j.sparqlbuilder.core.SparqlBuilder;
 import org.eclipse.rdf4j.sparqlbuilder.core.query.InsertDataQuery;
 import org.eclipse.rdf4j.sparqlbuilder.graphpattern.GraphPatterns;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.provframework.capture.StreamUtils;
@@ -39,23 +38,11 @@ public class SparqlLang {
     private static Prefix xsdPrefix = SparqlBuilder.prefix(XSD.PREFIX, xsdIRI);
 
     private String myNamespace;
-    private IRI myIRI;
     private Prefix myPrefix;
-
-    @Autowired
-    public SparqlLang() {
-        
-    }
-
-    public SparqlLang(String myNamespace, String myPrefixString) {
-        this.myNamespace = myNamespace;
-        this.myPrefix = SparqlBuilder.prefix(myPrefixString, myIRI);
-    }
 
     public void setMyNamespace(String myNamespace, String myPrefixString) {
         this.myNamespace = myNamespace;
-        this.myIRI = Values.iri(myNamespace);
-        this.myPrefix = SparqlBuilder.prefix(myPrefixString, myIRI);
+        this.myPrefix = SparqlBuilder.prefix(myPrefixString, Values.iri(myNamespace));
     }
 
     public InsertDataQuery getInsertStatement(Bundle bundle) {

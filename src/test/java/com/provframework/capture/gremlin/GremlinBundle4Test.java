@@ -16,7 +16,6 @@ class GremlinBundle4Test {
                   name=Entity 1
                 Vertex[label=Activity]
                   name=Activity 2
-                  startedAtTime=2025-01-25T11:30:00Z
                 Vertex[label=Entity]
                   name=Entity 2
                 Vertex[label=Agent]

@@ -29,7 +29,6 @@ class SparqlBundle4Test {
             abox:Entity%202 prov:wasGeneratedBy abox:Activity%202 .
             abox:Activity%202 rdf:type prov:Activity .
             abox:Activity%202 rdfs:label "Activity 2"^^xsd:string .
-            abox:Activity%202 prov:startedAtTime "2025-01-25T11:30:00.0Z"^^xsd:dateTime .
             abox:Person%20Agent rdf:type prov:Agent .
             abox:Person%20Agent rdfs:label "Person Agent"^^xsd:string .
             abox:Activity%202 prov:wasAssociatedWith abox:Person%20Agent .

@@ -21,8 +21,8 @@ It is not meant to be run as-is. The intent is that you clone or fork and modify
 - [x] Null testing with more bundles and corresponding test cases for all graph types
 - [x] Fix 100% of sonar findings
 
-### TODO for 0.2.0 Release
-- [ ] Achieve 100% unit test code coverage
+### TODO for 0.2.0 Release  
+- [x] Achieve 100% unit test code coverage
 
 ### TODO for 0.3.0 Release
 - [ ] Performance testing and document results for Neptune: Cypher (AWS Deployment)
@@ -37,3 +37,11 @@ It is not meant to be run as-is. The intent is that you clone or fork and modify
 ### TODO for 0.4.0 Release
 - [ ] Implement batched upserts
 - [ ] Re-run performance tests and document
+
+### TODO for 1.0.0 Release
+- [ ] Re-test and document with performance improvements
+- [ ] Fix 100% sonar issues for performance improvements
+- [ ] Update unit tests to get back to 100% test coverage
+
+### TODO for 1.1.0 Release
+- [ ] Add full PROV-O terminology support

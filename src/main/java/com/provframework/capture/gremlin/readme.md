@@ -15,3 +15,6 @@ cd /opt/janusgraph/bin
 
 g.V()
 ```
+
+### How to clear a gremlin DB (for testing)
+g.V().drop().iterate()

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.provframework'
-version = '0.1.0'
+version = '0.2.0'
 description = 'Service for capturing provenance data.'
 
 java {
@@ -80,7 +80,7 @@ sonarqube {
 		property "sonar.projectKey", "prov-capture"
   		property "sonar.projectName", "prov-capture" 
   		property "sonar.host.url", "http://localhost:9000"
-  		property "sonar.token", "sqp_fa8503d4ecc71cb3d141602e355dfac471fa4cc1"
+  		property "sonar.token", "sqp_2c4b9cba645753bbe78aeed7e46547a9095e2421"
 		property "sonar.jacoco.reportPaths", "$buildDir/jacoco/test.exec"
 	}
 }
