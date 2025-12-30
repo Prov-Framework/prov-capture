@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import com.provframework.capture.prov.Bundle;
+import com.provframework.build.java.Bundle;
 
 class BundleDeserializerTest {
 

@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provframework.capture.prov.Bundle;
+import com.provframework.build.java.Bundle;
 
 import java.io.IOException;
 

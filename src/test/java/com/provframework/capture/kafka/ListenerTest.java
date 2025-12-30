@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 
-import com.provframework.capture.prov.Bundle;
+import com.provframework.build.java.Bundle;
 
 class ListenerTest {
 

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 
-import com.provframework.capture.prov.Bundle;
+import com.provframework.build.java.Bundle;
 
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.query.Update;

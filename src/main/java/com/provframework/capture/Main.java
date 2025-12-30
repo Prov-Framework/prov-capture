@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.provframework.capture.cypher.CypherDriver;
 import com.provframework.capture.gremlin.GremlinDriver;
-import com.provframework.capture.prov.Bundle;
+import com.provframework.build.java.Bundle;
 import com.provframework.capture.sparql.SparqlDriver;
 
 @SpringBootApplication

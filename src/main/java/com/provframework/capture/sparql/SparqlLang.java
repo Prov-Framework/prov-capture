@@ -17,10 +17,10 @@ import org.eclipse.rdf4j.sparqlbuilder.graphpattern.GraphPatterns;
 import org.springframework.stereotype.Component;
 
 import com.provframework.capture.StreamUtils;
-import com.provframework.capture.prov.Activity;
-import com.provframework.capture.prov.Agent;
-import com.provframework.capture.prov.Bundle;
-import com.provframework.capture.prov.Entity;
+import com.provframework.build.java.Activity;
+import com.provframework.build.java.Agent;
+import com.provframework.build.java.Bundle;
+import com.provframework.build.java.Entity;
 
 @Component
 public class SparqlLang {

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 
 import com.provframework.capture.kafka.BundleDeserializer;
-import com.provframework.capture.prov.Bundle;
+import com.provframework.build.java.Bundle;
 
 class GremlinLangTest {
     public String test(String testBundle) throws IOException {

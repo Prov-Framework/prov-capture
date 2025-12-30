@@ -6,7 +6,7 @@ import org.eclipse.rdf4j.sparqlbuilder.core.query.InsertDataQuery;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.provframework.capture.prov.Bundle;
+import com.provframework.build.java.Bundle;
 
 @Service
 public class SparqlDriver {
